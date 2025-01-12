@@ -13,7 +13,7 @@
 # G = (V, E)
 from collections import namedtuple
 
-Graph = namedtuple("myGraph", ["nodes", "edges"])
+Graph = namedtuple("myGraph", ["nodes", "edges", "is_directed"])
 
 nodes = ["A", "B", "C", "D"]
 edges = [
@@ -43,7 +43,8 @@ def adjacency_dict(graph):
     for edge in graph.edges:
         node1, node2 = edge[0], edge[1]
         adj[node1].append(node2)
-        adj[node2].append(node1)
+        if not graph.is_directed:
+            adj[node2].append(node1)
     return adj
 
 # adjacency_dict(G)
@@ -73,7 +74,8 @@ def adjacency_matrix(graph):
     for edge in graph.edges:
         node1, node2 = edge[0], edge[1]
         adj[node1][node2] += 1
-        adj[node2][node1] += 1
+        if not graph.is_directed:
+            adj[node2][node1] += 1
     return adj
 
 print(adjacency_matrix(G))
