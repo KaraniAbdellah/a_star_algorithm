@@ -14,7 +14,6 @@
 from collections import namedtuple
 
 Graph = namedtuple("myGraph", ["nodes", "edges", "is_directed"])
-
 nodes = ["A", "B", "C", "D"]
 edges = [
     ("A", "B"),
@@ -26,8 +25,7 @@ edges = [
     ("A", "C"),
     ("C", "A"),
 ]
-
-G = Graph(nodes, edges)
+G = Graph(nodes, edges, is_directed=True)
 # print(G.edges)
 # print(G.nodes)
 
@@ -62,7 +60,7 @@ edges = [
     (3, 1),
     (3, 2)
 ]
-G = Graph(nodes, edges)
+G = Graph(nodes, edges, is_directed=True)
 def adjacency_matrix(graph):
     '''
     return the adjacency matrix of the graph
@@ -81,7 +79,15 @@ def adjacency_matrix(graph):
 print(adjacency_matrix(G))
 
 
-
+'''
+    Adjacency List:
+        can be use in deffrent type of data
+        uses less memory and good for graph with few edges
+    
+    Adjacency Matrix:
+        only works for graphs whose nodes are integers
+        not a good choice for space graphs, use most memory
+'''
 
 
 
