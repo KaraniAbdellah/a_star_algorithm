@@ -92,5 +92,3 @@ print(adjacency_matrix(G))
 
 
 
-
-
