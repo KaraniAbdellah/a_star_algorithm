@@ -62,8 +62,8 @@ edges = [
 G = Graph(nodes, edges, is_directed=True)
 def adjacency_matrix(graph):
     '''
-    return the adjacency matrix of the graph
-    Assumes that graph.nodes is equivalent  to range(len(graph.node))
+        return the adjacency matrix of the graph
+        Assumes that graph.nodes is equivalent  to range(len(graph.node))
     '''
     adj = [[0 for node in graph.nodes] for node in graph.nodes]
     # [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
