@@ -31,7 +31,6 @@ G = Graph(nodes, edges, is_directed=True)
 
 
 # Create graph with Adjacency list
-
 def adjacency_dict(graph):
     '''
     return the adjacency list representation of the graph
@@ -81,7 +80,7 @@ print(adjacency_matrix(G))
 
 '''
     Adjacency List:
-        can be use in deffrent type of data
+        can be use in defferent type of data
         uses less memory and good for graph with few edges
     
     Adjacency Matrix:
