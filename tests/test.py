@@ -14,4 +14,23 @@
         Graph, (Min-Heap), Set, Map
 '''
 
+# this is undirected graph
+class Graph:
+    def __init__(self, x):
+        self.graph = {}
+
+    def add_node(u, v, weight):
+        if u not in self.graph:
+            self.graph[u] = []
+        if v not in self.graph:
+            self.graph[v] = []
+
+        # add ele to graph
+        self.graph[u] =  
+        
+
+
+
+
+
 
