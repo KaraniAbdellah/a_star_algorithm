@@ -4,20 +4,21 @@ from collections import namedtuple
 Graph = namedtuple("MyGraph", ["nodes", "edges", "is_directed"])
 nodes = ["A", "B", "C", "D", "E", "F", "G"]
 edges = [
-    ("A", "B", 4), ("B", "A", 4),
-    ("A", "C", 3), ("C", "A", 3),
-    ("A", "E", 7), ("E", "A", 7),
-    ("B", "C", 6), ("C", "B", 6),
-    ("B", "D", 5), ("D", "B", 5),
-    ("C", "D", 11), ("D", "C", 11),
-    ("C", "E", 8), ("E", "C", 8),
-    ("D", "E", 2), ("E", "D", 2),
-    ("D", "F", 2), ("F", "D", 2),
-    ("D", "G", 10), ("G", "D", 10),
-    ("E", "G", 5), ("G", "E", 5),
-    ("F", "G", 3), ("G", "F", 3)
+    ("A", "B", 4),
+    ("A", "C", 3),
+    ("A", "E", 7),
+    ("B", "C", 6),
+    ("B", "D", 5),
+    ("C", "D", 11),
+    ("C", "E", 8),
+    ("D", "E", 2),
+    ("D", "F", 2),
+    ("D", "G", 10),
+    ("E", "G", 5),
+    ("F", "G", 3)
 ]
-G = Graph(nodes, edges, is_directed=False)
+G = Graph(nodes, edges, is_directed=True)
+
 
 def adjacency_list(graph):
     '''
@@ -34,8 +35,27 @@ def adjacency_list(graph):
     print(adj)
     return adj
 
-adjacency_list(G)
+adj_list = adjacency_list(G)
 
+
+# Make Heristic Graph
+'''
+    H(n) = node_ele(n) * 2
+'''
+print("------------")
+def heristic_Graph(graph, adj_list):
+    H = {node: 0 for node in graph.nodes}
+    # print(H)
+    for ele in adj_list:
+        # print(adj_list[ele])
+        s = 0
+        for t in adj_list[ele]:
+            s += t[1]
+        H[ele] = s * 2
+    # print(H)
+    return H
+
+H = heristic_Graph(G, adj_list)
 
 
 
