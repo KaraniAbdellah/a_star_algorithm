@@ -56,11 +56,28 @@ def heristic_Graph(graph, adj_list):
     return H
 
 H = heristic_Graph(G, adj_list)
+print(H)
 
 
-
-
-
+# Find The Shortest Path Between (A --> F) With a* algorithm
+path = []
+def a_start_algorithm(path, adj_list, H, start, end):
+    print(adj_list['A'])
+    minEle, temp = 0, 0
+    node = adj_list[start][0][0]
+    for ele in adj_list['A']:
+        if (minEle == 0):
+            temp = ele[1] + H[ele[0]]
+        else:
+            if minEle < temp:
+                node = ele[0]
+                temp = minEle
+        minEle = ele[1] + H[ele[0]]
+    print(temp)
+    print(node)
+        
+        
+a_start_algorithm(path, adj_list, H, 'B', 'F')
 
 
 
