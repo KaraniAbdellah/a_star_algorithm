@@ -25,17 +25,15 @@ def adjacency_list(graph):
         return adjacency list representation of graph
     '''
     adj = {node: [] for node in graph.nodes}
-    print(adj)
     for edge in graph.edges:
         node1, node2, weight = edge[0], edge[1], edge[2]
-        print(node1, node2)
         adj[node1].append((node2, weight))
         if graph.is_directed:
             adj[node2].append((node1, weight))
-    print(adj)
     return adj
 
 adj_list = adjacency_list(G)
+print(adj_list)
 
 
 # Make Heristic Graph
@@ -45,14 +43,11 @@ adj_list = adjacency_list(G)
 print("------------")
 def heristic_Graph(graph, adj_list):
     H = {node: 0 for node in graph.nodes}
-    # print(H)
     for ele in adj_list:
-        # print(adj_list[ele])
         s = 0
         for t in adj_list[ele]:
             s += t[1]
         H[ele] = s * 2
-    # print(H)
     return H
 
 H = heristic_Graph(G, adj_list)
@@ -60,26 +55,29 @@ print(H)
 
 
 # Find The Shortest Path Between (A --> F) With a* algorithm
-path = []
-def a_start_algorithm(path, adj_list, H, start, end):
-    print(adj_list['A'])
-    minEle, temp = 0, 0
-    node = adj_list[start][0][0]
-    for ele in adj_list['A']:
-        if (minEle == 0):
-            temp = ele[1] + H[ele[0]]
-        else:
-            if minEle < temp:
-                node = ele[0]
-                temp = minEle
-        minEle = ele[1] + H[ele[0]]
-    print(temp)
-    print(node)
-        
-        
-a_start_algorithm(path, adj_list, H, 'B', 'F')
+from heapq import heappop, heappush
 
+def a_star_algorithm(adj_list, H, start, end):
+    open_set = [(0 + H[start], 0, start, [])]  # (f, g, node, path)
+    print(open_set)
+    visited = set()
+    print(visited)
+    while open_set:
+        _, g, node, path = heappop(open_set)
+        if node in visited:
+            continue
+        path = path + [node]
+        visited.add(node)
+        if node == end:
+            return path, g  # Return path and total cost
+        for neighbor, cost in adj_list.get(node, []):
+            if neighbor not in visited:
+                heappush(open_set, (g + cost + H[neighbor], g + cost, neighbor, path))
+    return None, float("inf")  # No path found
 
+# Exemple d'utilisation
+path, cost = a_star_algorithm(adj_list, H, 'A', 'F')
+print("Shortest path:", path, "with cost:", cost)
 
 
 

@@ -33,7 +33,7 @@ G = Graph(nodes, edges, is_directed=True)
 # Create graph with Adjacency list
 def adjacency_dict(graph):
     '''
-    return the adjacency list representation of the graph
+        return the adjacency list representation of the graph
     '''
     adj = {node: [] for node in graph.nodes}
     print(adj) # {'A': [], 'B': [], 'C': [], 'D': []}
