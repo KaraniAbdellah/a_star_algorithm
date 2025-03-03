@@ -5,7 +5,7 @@ import ttkbootstrap as ttk
 # window
 window = ttk.Window(themename="darkly")
 # window = ttk.Window(themename="journal")
-window.title("Hello Window")
+window.title("Miles To Kilometer")
 window.geometry("300x150")
 
 
@@ -28,6 +28,7 @@ entry = ttk.Entry(master=input_frame, textvariable=entry_int)
 button = ttk.Button(master=input_frame, text="CLick Me", command=convert)
 entry.pack(side="left", padx=10)
 button.pack(side="left")
+entry.pack()
 input_frame.pack(pady=10)
 
 
@@ -37,7 +38,6 @@ output_label = ttk.Label(master=window,
         text='Output',
         font="Calibri 24 bold",
         textvariable=output_string)
-
 output_label.pack(pady=5)
 
 
