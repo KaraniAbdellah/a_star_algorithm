@@ -1,0 +1,20 @@
+Creating a Window
+    Use tk.Tk() to initialize the main window.
+    Use mainloop() to keep the application running.
+
+Canvas for Drawing Graphs
+    Use Canvas to draw nodes and edges.
+    Use create_oval() for nodes and create_line() for edges.
+
+Event Handling (User Interaction)
+    Use bind() to detect clicks for selecting nodes.
+    Use Button widgets to trigger A* execution.
+
+Grid Layout (Optional UI Elements)
+    Use pack(), grid(), or place() to arrange widgets.
+
+Basic Tkinter Widgets
+    Label (display text)
+    Button (trigger actions)
+    Entry (take user input)
+
