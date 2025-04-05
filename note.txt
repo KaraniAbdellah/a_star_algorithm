@@ -20,3 +20,34 @@ Canvas for Drawing Graphs
 
 Project Structure:
     use class diagramm
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////
+Dialog boxes:
+    Use messagebox.showinfo() for messages
+    Use simpledialog.askstring() to get text input
+
+Drawing features:
+    Use canvas.delete() to remove drawings
+    Use canvas.itemconfig() to change colors
+    Use canvas.move() to move objects
+
+Mouse actions:
+    Use canvas.bind("<Button-3>") for right-click
+    Use canvas.bind("<B1-Motion>") for dragging
+
+
