@@ -88,14 +88,8 @@ class App(ctk.CTk):
             text="Show Logs",
             command=self.animated_panel.animate)
         self.button.place(anchor="sw",
-                relx=0, rely=1.1)
-
-        
-        
-        
+                relx=0, rely=1)
         
 
 window = App()
 window.mainloop()
-
-
