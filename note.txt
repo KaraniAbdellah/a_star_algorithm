@@ -9,6 +9,7 @@ Basic Tkinter Widgets --> Done
 
 Grid Layout (Optional UI Elements)
     Use pack(), grid(), or place() to arrange widgets.
+    and use frames
 
 Event Handling (User Interaction)
     Use bind() to detect clicks for selecting nodes.
