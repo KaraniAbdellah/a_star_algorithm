@@ -7,7 +7,7 @@ Basic Tkinter Widgets --> Done
     Button (trigger actions)
     Entry (take user input)
 
-Grid Layout (Optional UI Elements)
+Grid Layout (Optional UI Elements) --> 
     Use pack(), grid(), or place() to arrange widgets.
     and use frames
 

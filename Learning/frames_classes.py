@@ -17,7 +17,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.geometry("900x900")
-        self.title("Title Here")
+        self.title("Frames With Classes")
         self.button = ctk.CTkButton(master=self, text="Test")
         self.button.pack(side="top", fill="both", expand=False)
         
