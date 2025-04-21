@@ -3,15 +3,6 @@ import tkinter as tk;
 from tkinter import ttk; # provide addition functionality
 
 
-class MyFrame(ctk.CTkFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-
-        # add widgets onto the frame, for example:
-        self.label = ctk.CTkLabel(self)
-        self.label.grid(row=0, column=0, padx=20)
-
-
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
