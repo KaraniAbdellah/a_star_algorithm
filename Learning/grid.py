@@ -18,11 +18,11 @@ class App(ctk.CTk):
         self.button1 = ctk.CTkLabel(master=self.frame, text="button1", fg_color="red")
         self.button2 = ctk.CTkLabel(master=self.frame, text="button2", fg_color="red")
 
-
         # define grid --> columnconfigure() --> create columns
         # weight of column if weight big he take more space
         self.frame.columnconfigure(0, weight=1)
         self.frame.columnconfigure(1, weight=1)
+        self.frame.columnconfigure(2, weight=1)
         self.frame.rowconfigure(0, weight=1)
         # We Have Two Columns and One Row
         

@@ -15,33 +15,22 @@ class App(ctk.CTk):
         self.frame_right = ctk.CTkFrame(master=self)
         self.frame_right.pack(side="right", expand=True, fill="both")
 
+        # grid for left frame
+        self.frame_left.columnconfigure(0, weight=0)
+        self.frame_left.columnconfigure(1, weight=0)
+        self.frame_left.columnconfigure(2, weight=0)
+        
         self.button1 = ctk.CTkButton(master=self.frame_left, text="Button1")
         self.button2 = ctk.CTkButton(master=self.frame_left, text="Button2")
         self.button3 = ctk.CTkButton(master=self.frame_left, text="Button3")
-        self.button1.pack(side="right")
-        self.button2.pack(side="left")
-        self.button3.pack(side="top")
 
-        self.radio1 = ctk.CTkRadioButton(master=self.frame_left)
-        self.radio2 = ctk.CTkRadioButton(master=self.frame_left)
-        self.radio1.pack()
-        self.radio2.pack()
+        self.button1.grid(row=0, column=0, columnspan=1,sticky="nswe")
+        self.button2.grid(row=0, column=1, columnspan=1,sticky="nswe")
+        self.button3.grid(row=1, column=0, columnspan=1,sticky="nswe")
         
-        self.checkbox1 = ctk.CTkCheckBox(master=self.frame_left)
-        self.checkbox2 = ctk.CTkCheckBox(master=self.frame_left)
-        self.checkbox1.pack()
-        self.checkbox2.pack()
+        
 
-        self.sub_frame_right1 = ctk.CTkFrame(master=self.frame_right, fg_color="red")
-        self.sub_frame_right2 = ctk.CTkFrame(master=self.frame_right, fg_color="blue")
-        self.sub_frame_button1 = ctk.CTkFrame(master=self.frame_right, text="Button 3")
-        self.sub_frame_button2 = ctk.CTkFrame(master=self.frame_right, text="Button 4")
-        self.sub_frame_right1.pack()
-        self.sub_frame_right2.pack()
-        self.sub_frame_button1.pack()
-        self.sub_frame_button2.pack()
-        
-        
+
         
         
         
