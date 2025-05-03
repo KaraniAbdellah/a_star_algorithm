@@ -1,10 +1,13 @@
-import customtkinter as ctk 
+# Make Frame That Has All Buttons
+# Import Packages
+import customtkinter as ctk;
+import tkinter as tk;
+from tkinter import ttk; # provide addition functionality
 
-
-class Buttons(ctk.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master)
-
+class Buttons(ctk.CTkButton):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        
         self.add_node = ctk.CTkButton(master=self, text="Add Node")
         self.add_arcs = ctk.CTkButton(master=self, text="Add Arcs")
         self.define_start = ctk.CTkButton(master=self, text="Define Start")
@@ -24,26 +27,4 @@ class Buttons(ctk.CTkFrame):
         self.load_graph.pack()
 
 
-class Menu(ctk.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master)
         
-        self.menu_frame = Buttons(self)
-        self.menu_frame.pack()
-
-
-class App(ctk.CTk):
-    def __init__(self):
-        super().__init__()
-        width = self.winfo_screenwidth()
-        height = self.winfo_screenheight()
-        self.geometry(f"{width}x{height}")
-        self.title("A* Pathfinding Algorithm")
-
-        # Make Left And Right Frames
-        self.menu_frame = Menu(master=self)
-        self.menu_frame.pack()
-
-app= App()
-app.mainloop()
-
