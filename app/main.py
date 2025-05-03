@@ -2,34 +2,43 @@ import customtkinter as ctk
 
 
 class Buttons(ctk.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master)
+    def __init__(self, parent):
+        super().__init__(parent)
 
-        self.add_node = ctk.CTkButton(master=self, text="Add Node")
-        self.add_arcs = ctk.CTkButton(master=self, text="Add Arcs")
-        self.define_start = ctk.CTkButton(master=self, text="Define Start")
-        self.define_end = ctk.CTkButton(master=self, text="Define End")
-        self.launch = ctk.CTkButton(master=self, text="Launch")
-        self.clear = ctk.CTkButton(master=self, text="Clear")
-        self.save_graph = ctk.CTkButton(master=self, text="Save Graph")
-        self.load_graph = ctk.CTkButton(master=self, text="Load Graph")
+        btns_values = ["Add Node", "Add Arcs", "Define Start", "Define End", 
+            "Launch", "Clear", "Save Graph", "Load Graph"]
+        
+        for btn_value in btns_values:
+            self.btn = ctk.CTkButton(master=self, text=btn_value)
+            self.btn.pack()
 
-        self.add_node.pack()
-        self.add_arcs.pack()
-        self.define_start.pack()
-        self.define_end.pack()
-        self.launch.pack()
-        self.clear.pack()
-        self.save_graph.pack()
-        self.load_graph.pack()
+
+class Logs_Adj(ctk.CTkFrame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        
+        self.logs = ctk.CTkLabel(master=self, text="Logs")
+        self.adj = ctk.CTkLabel(master=self, text="Adjcency matrix")
+        self.logs.pack()
+        self.adj.pack()
+        
 
 
 class Menu(ctk.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master)
-        
+    def __init__(self, parent, **kwargs):
+        super().__init__(parent, **kwargs)
+
+        # Frame Contain Buttons
         self.menu_frame = Buttons(self)
         self.menu_frame.pack()
+        
+        # Frame Contain Logs and Adj
+        self.logs_adj = Logs_Adj(self)
+        self.logs_adj.pack()
+        
+        
+                
+
 
 
 class App(ctk.CTk):
@@ -40,9 +49,14 @@ class App(ctk.CTk):
         self.geometry(f"{width}x{height}")
         self.title("A* Pathfinding Algorithm")
 
+        # Grid The Window
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        
+        
         # Make Left And Right Frames
-        self.menu_frame = Menu(self)
-        self.menu_frame.pack()
+        self.menu_frame = Menu(self, fg_color="red")
+        self.menu_frame.grid(column=0, sticky="nswe")
 
 app= App()
 app.mainloop()
