@@ -41,7 +41,7 @@ class App(ctk.CTk):
         self.title("A* Pathfinding Algorithm")
 
         # Make Left And Right Frames
-        self.menu_frame = Menu(master=self)
+        self.menu_frame = Menu(self)
         self.menu_frame.pack()
 
 app= App()
