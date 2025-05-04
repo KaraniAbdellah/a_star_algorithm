@@ -57,7 +57,21 @@ class Menu(ctk.CTkFrame):
         self.mode_ele.grid(row=2, column=1, columnspan=2, sticky="nswe")
         
 
+class Grid(ctk.CTkFrame):
+    def __init__(self, parent, **kwargs):
+        super().__init__(parent, **kwargs)
+        
+        self.canvas = ctk.CTkCanvas(self, width=500, height=500, bg="white")
+        self.canvas.pack(expand=True, fill="both")
 
+        grid_size = 30
+        for x in range(0, 1000, grid_size):
+            self.canvas.create_line(x, 0, x, 1000, fill="#ddd")
+
+        # draw horizontal lines
+        for y in range(0, 1000, grid_size):
+            self.canvas.create_line(0, y, 1000, y, fill="#ddd")
+        
 
 class App(ctk.CTk):
     def __init__(self):
@@ -74,6 +88,9 @@ class App(ctk.CTk):
         # Make Left And Right Frames
         self.menu_frame = Menu(self, fg_color="grey")
         self.menu_frame.grid(column=0, row=0, sticky="nswe", pady=10, padx=10)
+        
+        self.grid = Grid(self, fg_color="#eee")
+        self.grid.grid(column=1, row=0, sticky="nswe", pady=10, padx=10)
         
         
         
