@@ -74,8 +74,8 @@ class Tabs(ctk.CTkFrame):
         self.adj_matrix_btn = ctk.CTkButton(master=self, text="Adjacency Matrix", 
             command=show_adj_matrix, fg_color="#5F7A76", corner_radius=0, height=5)
 
-        self.logs_btn.grid(column=0, row=0, sticky="nswe")
-        self.adj_matrix_btn.grid(column=1, row=0, sticky="nswe")
+        self.logs_btn.grid(column=0, row=0, sticky="ns")
+        self.adj_matrix_btn.grid(column=1, row=0, sticky="ns")
     
 
 class Menu(ctk.CTkFrame):
