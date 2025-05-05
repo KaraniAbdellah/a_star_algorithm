@@ -41,30 +41,10 @@ class Buttons(ctk.CTkFrame):
 class Output(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)
-        
-        # Frame Configuration
-        self.columnconfigure(0, weight=1)
-        self.rowconfigure((0, 1), weight=1)
-        
-        # Adjcency Matrix && Logs Tab
-        self.tabs_frame = ctk.CTkFrame(self)
-        self.tabs_frame.columnconfigure((0, 1), weight=1)
-        self.tabs_frame.rowconfigure(0, weight=1)
-        
-        # Create tab buttons
-        self.logs_btn = ctk.CTkButton(master=self.tabs_frame, text="Logs", 
-            command=show_logs, fg_color="#4682B4", corner_radius=0)
-        self.adj_matrix_btn = ctk.CTkButton(master=self.tabs_frame, text="Adjacency Matrix", 
-            command=show_adj_matrix, fg_color="#5F7A76", corner_radius=0)
 
-        # Place tab buttons In The Frame
-        self.logs_btn.grid(column=0, row=0, sticky="nsew")
-        self.adj_matrix_btn.grid(column=1, row=0, sticky="nsew")
-        self.tabs_frame.grid(column=0, row=0, sticky="new")
-        
         # Create text box
         self.text_box = ctk.CTkTextbox(self, fg_color="white", text_color="black")
-        self.text_box.grid(column=0, row=1, sticky="nsew", padx=0, pady=(0, 5))
+        self.text_box.pack(side="top", fill="both", expand=True)
 
 
 class Mode(ctk.CTkFrame):
@@ -76,15 +56,27 @@ class Mode(ctk.CTkFrame):
         self.rowconfigure(0, weight=1)
         
         # Create status message at bottom
-        self.mode_label = ctk.CTkLabel(
-            master=self, 
-            text="Choose Your Mode",
-            fg_color="#333333",
-            text_color="white",
-            height=30
-        )
+        self.mode_label = ctk.CTkLabel(master=self, text="Choose Your Mode",
+            fg_color="#333333", text_color="white", height=30)
         self.mode_label.grid(row=0, column=0, sticky="nsew")
 
+
+class Tabs(ctk.CTkFrame):
+    def __init__(self, parent, **kwargs):
+        super().__init__(parent, **kwargs)
+
+        self.columnconfigure((0, 1), weight=1)
+        self.rowconfigure(0, weight=1)
+        
+        # Create tab buttons
+        self.logs_btn = ctk.CTkButton(master=self, text="Logs", 
+            command=show_logs, fg_color="#4682B4", corner_radius=0, height=5)
+        self.adj_matrix_btn = ctk.CTkButton(master=self, text="Adjacency Matrix", 
+            command=show_adj_matrix, fg_color="#5F7A76", corner_radius=0, height=5)
+
+        self.logs_btn.grid(column=0, row=0, sticky="nswe")
+        self.adj_matrix_btn.grid(column=1, row=0, sticky="nswe")
+    
 
 class Menu(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
@@ -92,20 +84,23 @@ class Menu(ctk.CTkFrame):
 
         # Grid For Menu
         self.columnconfigure(0, weight=1)
-        self.rowconfigure((0, 1, 2), weight=5, uniform="row")
-        self.rowconfigure(3, weight=1, uniform="row")
+        self.rowconfigure((0, 1, 2, 3), weight=1)
 
         # Frame Contain Buttons
         self.buttons_frame = Buttons(self)
         self.buttons_frame.grid(row=0, column=0, sticky="nsew")
 
         # Frame Contain Logs and Adjacency Matrix
+        self.output_frame = Tabs(self)
+        self.output_frame.grid(row=1, column=0, sticky="nsew", padx=0, pady=0)
+    
+        # Frame Contain Logs and Adjacency Matrix
         self.output_frame = Output(self)
-        self.output_frame.grid(row=1, column=0, rowspan=2, sticky="nsew", padx=10, pady=0)
+        self.output_frame.grid(row=2, column=0, sticky="nsew", padx=0, pady=0)
 
-        # Mode Element [It Like Status Wich Is {add node, ...}]
+        # Mode Element [It Like Status Wich Is {add node, add arcs, ...}]
         self.mode_ele = Mode(self)
-        self.mode_ele.grid(row=2, column=0, sticky="sew")
+        self.mode_ele.grid(row=3, column=0, sticky="nsew", padx=0, pady=0)
 
 
 class Grid(ctk.CTkFrame):
