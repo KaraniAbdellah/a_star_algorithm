@@ -29,8 +29,8 @@ class Buttons(ctk.CTkFrame):
 
         for btn_value in btns_values:
             self.btn = ctk.CTkButton(master=self, fg_color=btn_value["color"], 
-                text=btn_value["value"], height=10, corner_radius=2)
-            self.btn.grid(column=btn_value["column"], row=btn_value["row"], padx=5, pady=5, sticky="nsew")
+                text=btn_value["value"], corner_radius=2)
+            self.btn.grid(column=btn_value["column"], row=btn_value["row"], padx=4, pady=4, sticky="nsew")
 
 
 class Output(ctk.CTkFrame):
@@ -80,7 +80,8 @@ class Menu(ctk.CTkFrame):
 
         # Grid For Menu
         self.columnconfigure(0, weight=1)
-        self.rowconfigure((0, 2), weight=4)
+        self.rowconfigure((0), weight=2)
+        self.rowconfigure((2), weight=5)
         self.rowconfigure((1, 3), weight=0)
 
         # Frame Contain Buttons
