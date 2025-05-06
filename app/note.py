@@ -50,7 +50,7 @@ class Output(ctk.CTkFrame):
         # Create tab buttons frame
         self.tab_buttons_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.tab_buttons_frame.grid(row=0, column=0, pady=(5, 5), sticky="n")
-        
+
         # Add buttons to tab frame
         self.adj_matrix_btn = ctk.CTkButton(
             master=self.tab_buttons_frame, 
@@ -87,7 +87,7 @@ class Mode(ctk.CTkFrame):
         # Configure the frame
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
-        
+
         # Create status message at bottom
         self.mode_label = ctk.CTkLabel(
             master=self, 
