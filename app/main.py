@@ -101,27 +101,51 @@ class Menu(ctk.CTkFrame):
         self.mode_ele.grid(row=3, column=0, sticky="nsew", pady=(10, 10))
 
 
-class Node(ctk.CTKFrame):
-    def __init__(self, parent, **kwargs):
-        super().__init__(self, parent, **kwargs)
+class Node:
+    def __init__(self, canvas, x, y, node_value):
+        # Le'ts Create A Circle
+        canvas.create_oval(x - 25, y - 25, x + 25, y + 25, 
+            fill="#1B56FD", outline="black")
         
-            
+        canvas.create_text(x, y, text=str(node_value), 
+            font=("Arial", 12, "bold"), fill="white")
+
 
 class Grid(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)
 
+        # Node Value [Dynamic Valud]
+        self.node_counter = 1
+        # For Storing the positions for no duplicated
+        self.node_positions = []
+
         self.canvas = ctk.CTkCanvas(self, width=800, bg="white")
         self.canvas.pack(expand=True, fill="both")
 
+        # Draw The Grid
         grid_size = 25
-         # draw horizontal lines
         for x in range(0, 1000, grid_size):
             self.canvas.create_line(x, 0, x, 1000, fill="#ddd")
-
-        # draw horizontal lines
         for y in range(0, 1000, grid_size):
             self.canvas.create_line(0, y, 1000, y, fill="#ddd")
+
+        def add_node(event):
+            # Check if position already has a node (within 50px radius)
+            for pos in self.node_positions:
+                distance = ((pos[0] - event.x)**2 + (pos[1] - event.y)**2)**0.5
+                if distance < 50:
+                    print(f"Position ({event.x},{event.y}) already has a node nearby")
+                    return
+
+            print(f"Drawing node {self.node_counter} at ({event.x},{event.y})")
+            Node(self.canvas, event.x, event.y, self.node_counter)
+            self.node_positions.append((event.x, event.y))
+            self.node_counter += 1
+
+        # Bind The Canvas
+        self.canvas.bind("<Button-1>", add_node)
+
 
 
 class App(ctk.CTk):
