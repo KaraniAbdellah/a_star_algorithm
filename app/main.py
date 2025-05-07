@@ -101,6 +101,12 @@ class Menu(ctk.CTkFrame):
         self.mode_ele.grid(row=3, column=0, sticky="nsew", pady=(10, 10))
 
 
+class Node(ctk.CTKFrame):
+    def __init__(self, parent, **kwargs):
+        super().__init__(self, parent, **kwargs)
+        
+            
+
 class Grid(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)

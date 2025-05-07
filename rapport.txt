@@ -1,0 +1,5 @@
+// I find a Design
+// Start Learning TKinter and CustomTkinter
+// Start Implemnet The Class With Grid
+// Finich The Front End
+// Start Learning Events and Canvas
