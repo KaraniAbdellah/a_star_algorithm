@@ -8,6 +8,30 @@ def show_adj_matrix():
     print("Hello Adjacency Matrix")
 
 
+
+# Function Declaration
+def add_node():
+    # Mode().mode_value = "add_node"
+    print("We Are In Add Node Mode")
+
+
+def add_arcs():
+    # Mode().mode_value = "add_arcs"
+    print("We Are In Add Node Arcs")
+
+def define_start():
+    return
+def define_end():
+    return
+def launch():
+    return
+def clear():
+    return
+def save_graph():
+    return
+def load_graph():
+    return
+
 class Buttons(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -17,20 +41,21 @@ class Buttons(ctk.CTkFrame):
         self.rowconfigure((0, 1, 2, 3), weight=1)
 
         btns_values = [
-            {"value": "Add Nodes", "column": 0, "row": 0, "color": "#328E6E"},
-            {"value": "Add Arcs", "column": 1, "row": 0, "color": "#1B56FD"},
-            {"value": "Define Start", "column": 0, "row": 1, "color": "#FF9B17"},
-            {"value": "Define End", "column": 1, "row": 1, "color": "#F7374F"},
-            {"value": "Launch", "column": 0, "row": 2, "color": "#8B44AD"},  # Changed color to purple
-            {"value": "Clear", "column": 1, "row": 2, "color": "#5F7A76"},   # Changed color to match design
-            {"value": "Save Graph", "column": 0, "row": 3, "color": "#8B4513"},  # Changed color to brown
-            {"value": "Load Graph", "column": 1, "row": 3, "color": "#1F7D53"}
+            {"value": "Add Nodes", "column": 0, "row": 0, "color": "#328E6E", "function": add_node},
+            {"value": "Add Arcs", "column": 1, "row": 0, "color": "#1B56FD", "function": add_arcs},
+            {"value": "Define Start", "column": 0, "row": 1, "color": "#FF9B17", "function": define_start},
+            {"value": "Define End", "column": 1, "row": 1, "color": "#F7374F", "function": define_end},
+            {"value": "Launch", "column": 0, "row": 2, "color": "#8B44AD", "function": launch},  # Changed color to purple
+            {"value": "Clear", "column": 1, "row": 2, "color": "#5F7A76", "function": clear},   # Changed color to match design
+            {"value": "Save Graph", "column": 0, "row": 3, "color": "#8B4513", "function": save_graph},  # Changed color to brown
+            {"value": "Load Graph", "column": 1, "row": 3, "color": "#1F7D53", "function": load_graph},
         ]
 
         for btn_value in btns_values:
             self.btn = ctk.CTkButton(master=self, fg_color=btn_value["color"], 
-                text=btn_value["value"], corner_radius=2)
+                text=btn_value["value"], corner_radius=2, command=btn_value['function'])
             self.btn.grid(column=btn_value["column"], row=btn_value["row"], padx=4, pady=4, sticky="nsew")
+        
 
 
 class Output(ctk.CTkFrame):
@@ -44,6 +69,7 @@ class Output(ctk.CTkFrame):
 
 
 class Mode(ctk.CTkFrame):
+    mode_value = "null"
     def __init__(self, parent, **kwargs):
         super().__init__(parent, fg_color="transparent", **kwargs)
 
