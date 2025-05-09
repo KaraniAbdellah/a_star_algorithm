@@ -7,47 +7,69 @@ def show_logs():
 def show_adj_matrix():
     print("Hello Adjacency Matrix")
 
+# Class to handle application mode
+class ModeManager:
+    def __init__(self):
+        self.current_mode = "null"
+        self.callbacks = []
+    
+    def set_mode(self, new_mode):
+        self.current_mode = new_mode
+        for callback in self.callbacks:
+            callback(new_mode)
+    
+    def get_mode(self):
+        return self.current_mode
+    
+    def register_callback(self, callback):
+        self.callbacks.append(callback)
 
-
-# Function Declaration
-def add_node():
-    # Mode().mode_value = "add_node"
-    print("We Are In Add Node Mode")
-
-
-def add_arcs():
-    # Mode().mode_value = "add_arcs"
-    print("We Are In Add Node Arcs")
-
-def define_start():
-    return
-def define_end():
-    return
-def launch():
-    return
-def clear():
-    return
-def save_graph():
-    return
-def load_graph():
-    return
 
 class Buttons(ctk.CTkFrame):
-    def __init__(self, parent):
+    def __init__(self, parent, mode_manager):
         super().__init__(parent)
+        self.mode_manager = mode_manager
 
         # Grid The Buttons Frame
         self.columnconfigure((0, 1), weight=1)
         self.rowconfigure((0, 1, 2, 3), weight=1)
 
+        def add_node():
+            self.mode_manager.set_mode("Add Node")
+
+        def add_arcs():
+            self.mode_manager.set_mode("Add Arcs")
+
+        def define_start():
+            self.mode_manager.set_mode("Define Start")
+            
+        def define_end():
+            self.mode_manager.set_mode("Define End")
+            
+        def launch():
+            self.mode_manager.set_mode("Launch")
+            print("Launch algorithm")
+            
+        def clear():
+            self.mode_manager.set_mode("Clear")
+            print("Clear graph")
+            
+        def save_graph():
+            self.mode_manager.set_mode("Save Graph")
+            print("Save graph")
+            
+        def load_graph():
+            self.mode_manager.set_mode("Load Graph")
+            print("Load graph")
+    
         btns_values = [
             {"value": "Add Nodes", "column": 0, "row": 0, "color": "#328E6E", "function": add_node},
             {"value": "Add Arcs", "column": 1, "row": 0, "color": "#1B56FD", "function": add_arcs},
             {"value": "Define Start", "column": 0, "row": 1, "color": "#FF9B17", "function": define_start},
             {"value": "Define End", "column": 1, "row": 1, "color": "#F7374F", "function": define_end},
-            {"value": "Launch", "column": 0, "row": 2, "color": "#8B44AD", "function": launch},  # Changed color to purple
-            {"value": "Clear", "column": 1, "row": 2, "color": "#5F7A76", "function": clear},   # Changed color to match design
-            {"value": "Save Graph", "column": 0, "row": 3, "color": "#8B4513", "function": save_graph},  # Changed color to brown
+            {"value": "Launch", "column": 0, "row": 2, "color": "#8B44AD", "function": launch},
+            {"value": "Clear", "column": 1, "row": 2, "color": "#5F7A76", "function": clear},
+            {"value": "Save Graph", "column": 0, "row": 3, "color": "#8B4513", "function": save_graph},
             {"value": "Load Graph", "column": 1, "row": 3, "color": "#1F7D53", "function": load_graph},
         ]
 
@@ -55,7 +77,6 @@ class Buttons(ctk.CTkFrame):
             self.btn = ctk.CTkButton(master=self, fg_color=btn_value["color"], 
                 text=btn_value["value"], corner_radius=2, command=btn_value['function'])
             self.btn.grid(column=btn_value["column"], row=btn_value["row"], padx=4, pady=4, sticky="nsew")
-        
 
 
 class Output(ctk.CTkFrame):
@@ -67,20 +88,25 @@ class Output(ctk.CTkFrame):
         self.text_box.pack(side="top", fill="both", expand=True)
 
 
-
 class Mode(ctk.CTkFrame):
-    mode_value = "null"
-    def __init__(self, parent, **kwargs):
+    def __init__(self, parent, mode_manager, **kwargs):
         super().__init__(parent, fg_color="transparent", **kwargs)
+        self.mode_manager = mode_manager
 
         # Configure the frame
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
         # Create status message at bottom
-        self.mode_label = ctk.CTkLabel(master=self, text="Mode: define_end", fg_color="transparent",
+        self.mode_label = ctk.CTkLabel(master=self, text="Mode: null", fg_color="transparent",
             text_color="black", anchor="w", font=("Arial", 16))
         self.mode_label.grid(row=0, column=0, sticky="sw", padx=5)
+        
+        # Register callback to update label when mode changes
+        def update_mode_display(new_mode):
+            self.mode_label.configure(text=f"Mode: {new_mode}")
+        
+        self.mode_manager.register_callback(update_mode_display)
 
 
 class Tabs(ctk.CTkFrame):
@@ -101,8 +127,9 @@ class Tabs(ctk.CTkFrame):
 
 
 class Menu(ctk.CTkFrame):
-    def __init__(self, parent, **kwargs):
+    def __init__(self, parent, mode_manager, **kwargs):
         super().__init__(parent, **kwargs)
+        self.mode_manager = mode_manager
 
         # Grid For Menu
         self.columnconfigure(0, weight=1)
@@ -110,8 +137,12 @@ class Menu(ctk.CTkFrame):
         self.rowconfigure((2), weight=5)
         self.rowconfigure((1, 3), weight=0)
 
+        # Mode Element [It Like Status Which Is {add node, add arcs, ...}]
+        self.mode_ele = Mode(self, self.mode_manager)
+        self.mode_ele.grid(row=3, column=0, sticky="nsew", pady=(10, 10))
+
         # Frame Contain Buttons
-        self.buttons_frame = Buttons(self)
+        self.buttons_frame = Buttons(self, self.mode_manager)
         self.buttons_frame.grid(row=0, column=0, sticky="nsew")
 
         # Frame Contain Logs and Adjacency Matrix
@@ -122,14 +153,10 @@ class Menu(ctk.CTkFrame):
         self.output_frame = Output(self)
         self.output_frame.grid(row=2, column=0, sticky="nsew")
 
-        # Mode Element [It Like Status Wich Is {add node, add arcs, ...}]
-        self.mode_ele = Mode(self)
-        self.mode_ele.grid(row=3, column=0, sticky="nsew", pady=(10, 10))
-
 
 class Node:
     def __init__(self, canvas, x, y, node_value):
-        # Le'ts Create A Circle
+        # Let's Create A Node
         canvas.create_oval(x - 25, y - 25, x + 25, y + 25, 
             fill="#1B56FD", outline="black")
         
@@ -138,10 +165,11 @@ class Node:
 
 
 class Grid(ctk.CTkFrame):
-    def __init__(self, parent, **kwargs):
+    def __init__(self, parent, mode_manager, **kwargs):
         super().__init__(parent, **kwargs)
+        self.mode_manager = mode_manager
 
-        # Node Value [Dynamic Valud]
+        # Node Value [Dynamic Value]
         self.node_counter = 1
         # For Storing the positions for no duplicated
         self.node_positions = []
@@ -149,29 +177,43 @@ class Grid(ctk.CTkFrame):
         self.canvas = ctk.CTkCanvas(self, width=800, bg="white")
         self.canvas.pack(expand=True, fill="both")
 
-        # Draw The Grid
+        # Draw The Grid [Virtical and Horizantal]
         grid_size = 25
         for x in range(0, 1000, grid_size):
             self.canvas.create_line(x, 0, x, 1000, fill="#ddd")
         for y in range(0, 1000, grid_size):
             self.canvas.create_line(0, y, 1000, y, fill="#ddd")
 
-        def add_node(event):
-            # Check if position already has a node (within 50px radius)
-            for pos in self.node_positions:
-                distance = ((pos[0] - event.x)**2 + (pos[1] - event.y)**2)**0.5
-                if distance < 50:
-                    print(f"Position ({event.x},{event.y}) already has a node nearby")
-                    return
+        # Handle mouse clicks based on current mode
+        def on_canvas_click(event):
+            current_mode = self.mode_manager.get_mode()
+            
+            if current_mode == "Add Node":
+                self.add_node(event)
+            elif current_mode == "Add Arcs":
+                print("Add Arcs functionality would go here")
+            elif current_mode == "Define Start":
+                print("Define Start functionality would go here")
+            elif current_mode == "Define End":
+                print("Define End functionality would go here")
+        
+        self.canvas.bind("<Button-1>", on_canvas_click)
+    
+    def add_node(self, event):
+        # Check if position already has a node (within 50px radius)
+        for pos in self.node_positions:
+            distance = ((pos[0] - event.x)**2 + (pos[1] - event.y)**2)**0.5
+            if distance < 50:
+                print(f"Position ({event.x},{event.y}) already has a node nearby")
+                return
 
-            print(f"Drawing node {self.node_counter} at ({event.x},{event.y})")
-            Node(self.canvas, event.x, event.y, self.node_counter)
-            self.node_positions.append((event.x, event.y))
-            self.node_counter += 1
-
-        # Bind The Canvas
-        self.canvas.bind("<Button-1>", add_node)
-
+        print(f"Drawing node {self.node_counter} at ({event.x},{event.y})")
+        Node(self.canvas, event.x, event.y, self.node_counter)
+        self.node_positions.append((event.x, event.y))
+        self.node_counter += 1
+    
+    
+    
 
 
 class App(ctk.CTk):
@@ -182,18 +224,22 @@ class App(ctk.CTk):
         self.geometry(f"{width}x{height}")
         self.title("A* Pathfinding Algorithm")
 
+        # Create mode manager to handle application state
+        self.mode_manager = ModeManager()
+
         # Grid The Window
         self.columnconfigure((0, 1), weight=1)
         self.rowconfigure(0, weight=1)
         
         # Make Left And Right Frames
-        self.menu_frame = Menu(self, fg_color="#EEEEEE")
+        self.menu_frame = Menu(self, self.mode_manager, fg_color="#EEEEEE")
         self.menu_frame.grid(column=0, row=0, sticky="nswe", pady=10, padx=10)
         
-        self.grid = Grid(self, fg_color="#FFFFFF")
+        self.grid = Grid(self, self.mode_manager, fg_color="#FFFFFF")
         self.grid.grid(column=1, row=0, sticky="nswe", pady=10, padx=10)
 
 
 app = App()
 app.mainloop()
+
 
