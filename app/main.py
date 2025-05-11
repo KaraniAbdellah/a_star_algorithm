@@ -36,22 +36,22 @@ class Buttons(ctk.CTkFrame):
 
         def define_start():
             set_mode("Define Start")
-            
+
         def define_end():
             set_mode("Define End")
-            
+
         def launch():
             set_mode("Launch")
-            
+
         def clear():
             set_mode("Clear")
-            
+ 
         def save_graph():
             set_mode("Save")
-            
+
         def load_graph():
             set_mode("Load")
-    
+
         btns_values = [
             {"value": "Add Nodes", "column": 0, "row": 0, "color": "#328E6E", "function": add_node},
             {"value": "Add Arcs", "column": 1, "row": 0, "color": "#1B56FD", "function": add_arcs},
@@ -67,7 +67,7 @@ class Buttons(ctk.CTkFrame):
             self.btn = ctk.CTkButton(master=self, fg_color=btn_value["color"], 
                 text=btn_value["value"], corner_radius=2, command=btn_value['function'])
             self.btn.grid(column=btn_value["column"], row=btn_value["row"], padx=4, pady=4, sticky="nsew")
-
+        
 
 class Output(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
@@ -140,60 +140,81 @@ class Menu(ctk.CTkFrame):
 
 class Node:
     def __init__(self, canvas, x, y, node_value):
-        # Let's Create A Node
-        canvas.create_oval(x - 25, y - 25, x + 25, y + 25, 
-            fill="#1B56FD", outline="black")
-        
-        canvas.create_text(x, y, text=str(node_value), 
-            font=("Arial", 12, "bold"), fill="white")
+        self.x = x
+        self.y = y
+        self.value = node_value
+        self.canvas = canvas
+        self.oval = canvas.create_oval(x - 25, y - 25, x + 25, y + 25, fill="#1B56FD", outline="black")
+        self.text = canvas.create_text(x, y, text=str(node_value), font=("Arial", 12, "bold"), fill="white")
 
 
 class Grid(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)
 
-        # Node Value [Dynamic Value]
         self.node_counter = 1
-        # For Storing the positions for no duplicated
-        self.node_positions = []
+        self.nodes = []
+        grid_size = 25
+        self.selected_nodes = []  # for arc drawing
 
         self.canvas = ctk.CTkCanvas(self, width=800, bg="white")
         self.canvas.pack(expand=True, fill="both")
-
-        # Draw The Grid [Virtical and Horizantal]
-        grid_size = 25
+        
         for x in range(0, 1000, grid_size):
             self.canvas.create_line(x, 0, x, 1000, fill="#ddd")
         for y in range(0, 1000, grid_size):
             self.canvas.create_line(0, y, 1000, y, fill="#ddd")
 
-        # Handle mouse clicks based on current mode
         def on_canvas_click(event):
             if current_mode == "Add Node":
                 self.add_node(event)
-            elif current_mode == "Add Arcs":
-                print("Add Arcs functionality would go here")
-            elif current_mode == "Define Start":
-                print("Define Start functionality would go here")
-            elif current_mode == "Define End":
-                print("Define End functionality would go here")
+            
+            if current_mode == "Add Arcs":
+                self.add_arc(event)
+
+
+        def on_canvas_double_click(event):
+            for node in self.nodes:
+                distance = ((node.x - event.x) ** 2 + (node.y - event.y) ** 2) ** 0.5
+                if distance < 25:
+                    print(f"Deleting node {node.value}")
+                    self.canvas.delete(node.oval)
+                    self.canvas.delete(node.text)
+                    self.nodes.remove(node)
+                    break
+
+        
         
         self.canvas.bind("<Button-1>", on_canvas_click)
-    
+        self.canvas.bind("<Double-Button-1>", on_canvas_double_click)
+        
+
     def add_node(self, event):
-        # Check if position already has a node (within 50px radius)
-        for pos in self.node_positions:
-            distance = ((pos[0] - event.x)**2 + (pos[1] - event.y)**2)**0.5
+        for node in self.nodes:
+            distance = ((node.x - event.x) ** 2 + (node.y - event.y) ** 2) ** 0.5
             if distance < 50:
                 print(f"Position ({event.x},{event.y}) already has a node nearby")
                 return
 
         print(f"Drawing node {self.node_counter} at ({event.x},{event.y})")
-        Node(self.canvas, event.x, event.y, self.node_counter)
-        self.node_positions.append((event.x, event.y))
+        new_node = Node(self.canvas, event.x, event.y, self.node_counter)
+        self.nodes.append(new_node)
         self.node_counter += 1
-    
-    
+  
+    def add_arc(self, event):
+        for node in self.nodes:
+            distance = ((node.x - event.x)**2 + (node.y - event.y)**2)**0.5
+            if distance < 25:
+                self.selected_nodes.append(node)
+                print(f"Selected node {node.value} for arc")
+
+                if len(self.selected_nodes) == 2:
+                    n1, n2 = self.selected_nodes
+                    self.canvas.create_line(n1.x, n1.y, n2.x, n2.y, width=2, fill="black")
+                    print(f"Arc added between Node {n1.value} and Node {n2.value}")
+                    self.selected_nodes = []  # reset for next arc
+                break
+
     
 
 
