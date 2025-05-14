@@ -174,11 +174,7 @@ class Grid(ctk.CTkFrame):
                 self.add_node(event)
 
             if current_mode == "Move Node":
-                for node in self.nodes:
-                        distance = ((node.x - event.x) ** 2 + (node.y - event.y) ** 2) ** 0.5
-                        if distance < 25:
-                            self.dragged_node = node
-                            break
+                self.move_node(event)
             
             if current_mode == "Add Arcs":
                 self.add_arc(event)
@@ -241,6 +237,12 @@ class Grid(ctk.CTkFrame):
                     self.selected_nodes = []  # reset for next arc
                 break
 
+    def move_node(self, event):
+        for node in self.nodes:
+            distance = ((node.x - event.x) ** 2 + (node.y - event.y) ** 2) ** 0.5
+            if distance < 25:
+                self.dragged_node = node
+                break
 
 
 
