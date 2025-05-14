@@ -30,6 +30,9 @@ class Buttons(ctk.CTkFrame):
 
         def add_node():
             set_mode("Add Node")
+            
+        def move_node():
+            set_mode("Move Node")
 
         def add_arcs():
             set_mode("Add Arcs")
@@ -54,13 +57,14 @@ class Buttons(ctk.CTkFrame):
 
         btns_values = [
             {"value": "Add Nodes", "column": 0, "row": 0, "color": "#328E6E", "function": add_node},
-            {"value": "Add Arcs", "column": 1, "row": 0, "color": "#1B56FD", "function": add_arcs},
-            {"value": "Define Start", "column": 0, "row": 1, "color": "#FF9B17", "function": define_start},
-            {"value": "Define End", "column": 1, "row": 1, "color": "#F7374F", "function": define_end},
-            {"value": "Launch", "column": 0, "row": 2, "color": "#8B44AD", "function": launch},
-            {"value": "Clear", "column": 1, "row": 2, "color": "#5F7A76", "function": clear},
-            {"value": "Save Graph", "column": 0, "row": 3, "color": "#8B4513", "function": save_graph},
-            {"value": "Load Graph", "column": 1, "row": 3, "color": "#1F7D53", "function": load_graph},
+            {"value": "Move Nodes", "column": 1, "row": 0, "color": "#328E6E", "function": move_node},
+            {"value": "Add Arcs", "column": 0, "row": 1, "color": "#1B56FD", "function": add_arcs},
+            {"value": "Define Start", "column": 1, "row": 1, "color": "#FF9B17", "function": define_start},
+            {"value": "Define End", "column": 0, "row": 2, "color": "#F7374F", "function": define_end},
+            {"value": "Launch", "column": 1, "row": 2, "color": "#8B44AD", "function": launch},
+            {"value": "Clear", "column": 0, "row": 3, "color": "#5F7A76", "function": clear},
+            {"value": "Save Graph", "column": 1, "row": 3, "color": "#8B4513", "function": save_graph},
+            {"value": "Load Graph", "column": 0, "row": 4, "color": "#1F7D53", "function": load_graph},
         ]
 
         for btn_value in btns_values:
@@ -91,7 +95,6 @@ class Mode(ctk.CTkFrame):
             fg_color="transparent", text_color="black", anchor="w", font=("Arial", 16))
 
         mode_label.grid(row=0, column=0, sticky="sw", padx=5)
-
 
 
 class Tabs(ctk.CTkFrame):
@@ -153,13 +156,14 @@ class Grid(ctk.CTkFrame):
         super().__init__(parent, **kwargs)
 
         self.node_counter = 1
-        self.nodes = []
+        self.nodes = [] # for store arcs
         grid_size = 25
         self.selected_nodes = []  # for arc drawing
+        self.dragged_node = None # no node want to move
 
         self.canvas = ctk.CTkCanvas(self, width=800, bg="white")
         self.canvas.pack(expand=True, fill="both")
-        
+
         for x in range(0, 1000, grid_size):
             self.canvas.create_line(x, 0, x, 1000, fill="#ddd")
         for y in range(0, 1000, grid_size):
@@ -168,6 +172,13 @@ class Grid(ctk.CTkFrame):
         def on_canvas_click(event):
             if current_mode == "Add Node":
                 self.add_node(event)
+
+            if current_mode == "Move Node":
+                for node in self.nodes:
+                        distance = ((node.x - event.x) ** 2 + (node.y - event.y) ** 2) ** 0.5
+                        if distance < 25:
+                            self.dragged_node = node
+                            break
             
             if current_mode == "Add Arcs":
                 self.add_arc(event)
@@ -182,11 +193,26 @@ class Grid(ctk.CTkFrame):
                     self.canvas.delete(node.text)
                     self.nodes.remove(node)
                     break
+        
 
+        def on_canvas_move(event):
+            if self.dragged_node:
+                # Update position
+                dx = event.x - self.dragged_node.x
+                dy = event.y - self.dragged_node.y
+                self.canvas.move(self.dragged_node.oval, dx, dy)
+                self.canvas.move(self.dragged_node.text, dx, dy)
+                self.dragged_node.x = event.x
+                self.dragged_node.y = event.y
         
-        
+        def on_canvas_release(event):
+            self.dragged_node = None
+            
         self.canvas.bind("<Button-1>", on_canvas_click)
         self.canvas.bind("<Double-Button-1>", on_canvas_double_click)
+        
+        self.canvas.bind("<B1-Motion>", on_canvas_move)
+        self.canvas.bind("<ButtonRelease-1>", on_canvas_release)
         
 
     def add_node(self, event):
@@ -200,7 +226,7 @@ class Grid(ctk.CTkFrame):
         new_node = Node(self.canvas, event.x, event.y, self.node_counter)
         self.nodes.append(new_node)
         self.node_counter += 1
-  
+
     def add_arc(self, event):
         for node in self.nodes:
             distance = ((node.x - event.x)**2 + (node.y - event.y)**2)**0.5
@@ -215,7 +241,7 @@ class Grid(ctk.CTkFrame):
                     self.selected_nodes = []  # reset for next arc
                 break
 
-    
+
 
 
 class App(ctk.CTk):
