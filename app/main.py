@@ -157,6 +157,8 @@ class Grid(ctk.CTkFrame):
         grid_size = 25
         self.selected_nodes = []  # for arc drawing
         self.arcs = []  # store arcs and weights between nodes
+        self.start_node = 0
+        self.end_node = 0
 
         self.canvas = ctk.CTkCanvas(self, width=800, bg="white")
         self.canvas.pack(expand=True, fill="both")
@@ -171,20 +173,11 @@ class Grid(ctk.CTkFrame):
                 self.add_node(event)
             if current_mode == "Add Arcs":
                 self.add_arc(event)
-            
-
-        def on_canvas_double_click(event):
-            for node in self.nodes:
-                distance = ((node.x - event.x) ** 2 + (node.y - event.y) ** 2) ** 0.5 # ((x1 - x2)^2 + (y1 - y2)^2)^1/2
-                if distance < 25:
-                    print(f"Deleting node {node.value}")
-                    self.canvas.delete(node.oval)
-                    self.canvas.delete(node.text)
-                    self.nodes.remove(node)
-                    break
-
+            if current_mode == "Define Start":
+                self.define_start(event)
+            if current_mode == "Define End":
+                self.define_start(event)
         self.canvas.bind("<Button-1>", on_canvas_click)
-        self.canvas.bind("<Double-Button-1>", on_canvas_double_click)
 
 
     def add_node(self, event):
@@ -264,7 +257,23 @@ class Grid(ctk.CTkFrame):
                     self.selected_nodes = []
                 break
 
-
+    def define_start(self, event):
+        for node in self.nodes:
+            distance = ((node.x - event.x)**2 + (node.y - event.y)**2)**0.5
+            if distance < 25:
+                print(f"the node is {(node.x, node.y)}")
+                # Draw Node with green
+                if (self.start_node == 0):
+                    self.oval = self.canvas.create_oval(event.x - 25, event.y - 25,
+                        event.x + 25, event.y + 25, fill="#FFFFF", outline="black")
+        
+    def define_end(self, event):
+        for node in self.nodes:
+            distance = ((node.x - event.x)**2 + (node.y - event.y)**2)**0.5
+            if distance < 25:
+                print(f"the node is {(node.x, node.y)}")
+                # Draw Node with red
+                
 
 
 class App(ctk.CTk):
