@@ -62,7 +62,7 @@ class Buttons(ctk.CTkFrame):
             {"value": "Launch", "column": 0, "row": 2, "color": "#8B44AD", "function": launch},
             {"value": "Clear", "column": 1, "row": 2, "color": "#5F7A76", "function": clear},
             {"value": "Save Graph", "column": 0, "row": 3, "color": "#8B4513", "function": save_graph},
-            {"value": "Load Graph", "column": 1, "row": 3, "color": "#1F7D53", "function": load_graph},
+            {"value": "Load Graph", "column": 1, "row": 3, "color": "#27548A", "function": load_graph},
         ]
 
         for btn_value in btns_values:
@@ -176,7 +176,9 @@ class Grid(ctk.CTkFrame):
             if current_mode == "Define Start":
                 self.define_start(event)
             if current_mode == "Define End":
-                self.define_start(event)
+                self.define_end(event)
+            if current_mode == "Launch":
+                self.launch(event)
         self.canvas.bind("<Button-1>", on_canvas_click)
 
 
@@ -252,6 +254,8 @@ class Grid(ctk.CTkFrame):
 
                     # Save arc info
                     self.arcs.append({"n1": n1, "n2": n2, "weight": weight})
+                    
+                    # Save Arcs in node
                     print(self.arcs[0]["n1"].x)
                     print(self.arcs[0]["n1"].y)
                     self.selected_nodes = []
@@ -264,8 +268,11 @@ class Grid(ctk.CTkFrame):
                 print(f"the node is {(node.x, node.y)}")
                 # Draw Node with green
                 if (self.start_node == 0):
-                    self.oval = self.canvas.create_oval(event.x - 25, event.y - 25,
-                        event.x + 25, event.y + 25, fill="#FFFFF", outline="black")
+                    self.canvas.create_oval(node.x - 25, node.y - 25,
+                        node.x + 25, node.y + 25, fill="#ACC572", outline="black")
+                    self.text = self.canvas.create_text(node.x, node.y, 
+                        text=str(node.value), font=("Arial", 12, "bold"), fill="white")
+                    self.start_node = node
         
     def define_end(self, event):
         for node in self.nodes:
@@ -273,7 +280,19 @@ class Grid(ctk.CTkFrame):
             if distance < 25:
                 print(f"the node is {(node.x, node.y)}")
                 # Draw Node with red
-                
+                if (self.end_node == 0):
+                    self.canvas.create_oval(node.x - 25, node.y - 25,
+                        node.x + 25, node.y + 25, fill="#CB0404", outline="black")
+                    self.text = self.canvas.create_text(node.x, node.y, 
+                        text=str(node.value), font=("Arial", 12, "bold"), fill="white")
+                    self.end_node = node
+           
+    def launch(self, event):
+        print(self.nodes)
+        print(self.arcs)
+        print(self.start_node)
+        print(self.end_node)
+        print("Lanching ...")     
 
 
 class App(ctk.CTk):
