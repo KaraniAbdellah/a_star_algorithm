@@ -1,6 +1,6 @@
 import customtkinter as ctk 
 from tkinter import simpledialog # for popups
-
+from tkinter import messagebox
 
 # Start Function
 def show_logs():
@@ -32,9 +32,6 @@ class Buttons(ctk.CTkFrame):
 
         def add_node():
             set_mode("Add Node")
-            
-        def move_node():
-            set_mode("Move Node")
 
         def add_arcs():
             set_mode("Add Arcs")
@@ -59,14 +56,13 @@ class Buttons(ctk.CTkFrame):
 
         btns_values = [
             {"value": "Add Nodes", "column": 0, "row": 0, "color": "#328E6E", "function": add_node},
-            {"value": "Move Nodes", "column": 1, "row": 0, "color": "#328E6E", "function": move_node},
-            {"value": "Add Arcs", "column": 0, "row": 1, "color": "#1B56FD", "function": add_arcs},
-            {"value": "Define Start", "column": 1, "row": 1, "color": "#FF9B17", "function": define_start},
-            {"value": "Define End", "column": 0, "row": 2, "color": "#F7374F", "function": define_end},
-            {"value": "Launch", "column": 1, "row": 2, "color": "#8B44AD", "function": launch},
-            {"value": "Clear", "column": 0, "row": 3, "color": "#5F7A76", "function": clear},
-            {"value": "Save Graph", "column": 1, "row": 3, "color": "#8B4513", "function": save_graph},
-            {"value": "Load Graph", "column": 0, "row": 4, "color": "#1F7D53", "function": load_graph},
+            {"value": "Add Arcs", "column": 1, "row": 0, "color": "#1B56FD", "function": add_arcs},
+            {"value": "Define Start", "column": 0, "row": 1, "color": "#FF9B17", "function": define_start},
+            {"value": "Define End", "column": 1, "row": 1, "color": "#F7374F", "function": define_end},
+            {"value": "Launch", "column": 0, "row": 2, "color": "#8B44AD", "function": launch},
+            {"value": "Clear", "column": 1, "row": 2, "color": "#5F7A76", "function": clear},
+            {"value": "Save Graph", "column": 0, "row": 3, "color": "#8B4513", "function": save_graph},
+            {"value": "Load Graph", "column": 1, "row": 3, "color": "#1F7D53", "function": load_graph},
         ]
 
         for btn_value in btns_values:
@@ -152,16 +148,14 @@ class Node:
         self.oval = canvas.create_oval(x - 25, y - 25, x + 25, y + 25, fill="#1B56FD", outline="black")
         self.text = canvas.create_text(x, y, text=str(node_value), font=("Arial", 12, "bold"), fill="white")
 
-
 class Grid(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)
 
         self.node_counter = 1
-        self.nodes = [] # for store arcs
+        self.nodes = [] # for store nodes (x, y)
         grid_size = 25
         self.selected_nodes = []  # for arc drawing
-        self.dragged_node = None # no node want to move
         self.arcs = []  # store arcs and weights between nodes
 
         self.canvas = ctk.CTkCanvas(self, width=800, bg="white")
@@ -175,16 +169,13 @@ class Grid(ctk.CTkFrame):
         def on_canvas_click(event):
             if current_mode == "Add Node":
                 self.add_node(event)
-
-            if current_mode == "Move Node":
-                self.move_node(event)
-            
             if current_mode == "Add Arcs":
                 self.add_arc(event)
+            
 
         def on_canvas_double_click(event):
             for node in self.nodes:
-                distance = ((node.x - event.x) ** 2 + (node.y - event.y) ** 2) ** 0.5
+                distance = ((node.x - event.x) ** 2 + (node.y - event.y) ** 2) ** 0.5 # ((x1 - x2)^2 + (y1 - y2)^2)^1/2
                 if distance < 25:
                     print(f"Deleting node {node.value}")
                     self.canvas.delete(node.oval)
@@ -192,41 +183,8 @@ class Grid(ctk.CTkFrame):
                     self.nodes.remove(node)
                     break
 
-        def on_canvas_move(event):
-            if self.dragged_node:
-                # Update position of the dragged node
-                dx = event.x - self.dragged_node.x
-                dy = event.y - self.dragged_node.y
-                self.canvas.move(self.dragged_node.oval, dx, dy)
-                self.canvas.move(self.dragged_node.text, dx, dy)
-                self.dragged_node.x = event.x
-                self.dragged_node.y = event.y
-
-                # Update arcs connected to the moved node
-                for arc in self.arcs:
-                    if arc["n1"] == self.dragged_node or arc["n2"] == self.dragged_node:
-                        # Update line coordinates
-                        x1, y1 = arc["n1"].x, arc["n1"].y
-                        x2, y2 = arc["n2"].x, arc["n2"].y
-                        self.canvas.coords(arc["line"], x1, y1, x2, y2)
-
-                        # Update text position (weight label)
-                        mid_x = (x1 + x2) / 2
-                        mid_y = (y1 + y2) / 2
-                        self.canvas.coords(arc["text"], mid_x, mid_y)
-
-                        # Update background for text
-                        bbox = self.canvas.bbox(arc["text"])
-                        self.canvas.coords(arc["bg"], bbox[0] - 4, bbox[1] - 4, bbox[2] + 4, bbox[3] + 4)
-
-        def on_canvas_release(event):
-            self.dragged_node = None
-
         self.canvas.bind("<Button-1>", on_canvas_click)
         self.canvas.bind("<Double-Button-1>", on_canvas_double_click)
-
-        self.canvas.bind("<B1-Motion>", on_canvas_move)
-        self.canvas.bind("<ButtonRelease-1>", on_canvas_release)
 
 
     def add_node(self, event):
@@ -241,29 +199,43 @@ class Grid(ctk.CTkFrame):
         self.nodes.append(new_node)
         self.node_counter += 1
 
-    def add_arc(self, event):
+    def add_arc(self, event):            
         for node in self.nodes:
             distance = ((node.x - event.x)**2 + (node.y - event.y)**2)**0.5
             if distance < 25:
                 self.selected_nodes.append(node)
                 if len(self.selected_nodes) == 2:
                     n1, n2 = self.selected_nodes
-                    weight = simpledialog.askstring(
-                        "Arc Weight",
-                        f"Enter weight between Node {n1.value} and Node {n2.value}:"
-                    )
 
-                    # Create arrowed line
-                    line = self.canvas.create_line(
-                        n1.x, n1.y, n2.x, n2.y,
+                    # check if n1 already exit in self.arcs
+                    for arc in self.arcs:
+                        if arc["n1"].x == n1.x and arc["n2"].x == n2.x:
+                        # or arc["n2"].x == n1.x and arc["n1"].x == n2.x:
+                            messagebox.showwarning("Warnning", "Arcs Already Exit")
+                            print("The Arcs Already Exit")
+                            self.selected_nodes = []
+                            return
+
+                    weight = 0
+                    while (weight == 0):
+                        weight = simpledialog.askstring(
+                            "Arc Weight",
+                            f"Enter weight != 0 between Node {n1.value} and Node {n2.value}:"
+                        )
+                        weight = int(weight)
+                         
+
+                    # Create line between two node
+                    self.canvas.create_line(
+                        n1.x + 25, n1.y, n2.x - 25, n2.y,
                         width=2, fill="black", arrow="last", arrowshape=(10, 12, 5)
                     )
 
-                    # Calculate midpoint
+                    # get mid distance between n1 and n2
                     mid_x = (n1.x + n2.x) / 2
                     mid_y = (n1.y + n2.y) / 2
 
-                    # Temporary text to get bbox
+                    # Create Weight
                     temp_text = self.canvas.create_text(
                         mid_x, mid_y, text=weight,
                         font=("Arial", 12, "bold")
@@ -271,37 +243,27 @@ class Grid(ctk.CTkFrame):
                     bbox = self.canvas.bbox(temp_text)
                     self.canvas.delete(temp_text)
 
-                    # Draw white rectangle background
+                    # Add a rectangle background to weight
                     padding = 4
-                    rect = self.canvas.create_rectangle(
+                    self.canvas.create_rectangle(
                         bbox[0] - padding, bbox[1] - padding,
                         bbox[2] + padding, bbox[3] + padding,
                         fill="white", outline=""
                     )
 
                     # Draw text on top
-                    text = self.canvas.create_text(
+                    self.canvas.create_text(
                         mid_x, mid_y, text=weight,
                         fill="blue", font=("Arial", 12, "bold")
                     )
 
                     # Save arc info
-                    self.arcs.append({
-                        "n1": n1, "n2": n2,
-                        "line": line,
-                        "text": text,
-                        "bg": rect
-                    })
-
+                    self.arcs.append({"n1": n1, "n2": n2, "weight": weight})
+                    print(self.arcs[0]["n1"].x)
+                    print(self.arcs[0]["n1"].y)
                     self.selected_nodes = []
                 break
 
-    def move_node(self, event):
-                for node in self.nodes:
-                    distance = ((node.x - event.x) ** 2 + (node.y - event.y) ** 2) ** 0.5
-                    if distance < 25:
-                        self.dragged_node = node
-                        break
 
 
 
