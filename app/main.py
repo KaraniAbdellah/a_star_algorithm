@@ -21,21 +21,6 @@ def set_mode(new_mode):
     if 'mode_label' in globals() and mode_label is not None:
         mode_label.configure(text=f"Mode: {new_mode}")
 
-class GraphController:
-    def __init__(self):
-        self.grid = None  # Will be set later
-        self.current_mode = "null"
-
-    def set_grid(self, grid):
-        self.grid = grid
-
-    def set_mode(self, new_mode):
-        self.current_mode = new_mode
-
-    def clear_canvas(self):
-        if self.grid:
-            self.grid.clear_canvas()
-
 class Buttons(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -164,6 +149,10 @@ class Node:
         self.oval = canvas.create_oval(x - 25, y - 25, x + 25, y + 25, fill="#1B56FD", outline="black")
         self.text = canvas.create_text(x, y, text=str(node_value), font=("Arial", 12, "bold"), fill="white")
 
+class Arc:
+    def __init__(self, canvas):
+        # We Create arcs Here
+
 class Grid(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)
@@ -237,7 +226,6 @@ class Grid(ctk.CTkFrame):
                             f"Enter weight != 0 between Node {n1.value} and Node {n2.value}:"
                         )
                         weight = int(weight)
-                         
 
                     # Create line between two node
                     self.canvas.create_line(
@@ -287,10 +275,7 @@ class Grid(ctk.CTkFrame):
                 print(f"the node is {(node.x, node.y)}")
                 # Draw Node with green
                 if (self.start_node == 0):
-                    self.canvas.create_oval(node.x - 25, node.y - 25,
-                        node.x + 25, node.y + 25, fill="#ACC572", outline="black")
-                    self.text = self.canvas.create_text(node.x, node.y, 
-                        text=str(node.value), font=("Arial", 12, "bold"), fill="white")
+                    self.canvas.itemconfig(node.oval, fill="#ACC572")
                     self.start_node = node
 
     def define_end(self, event):
@@ -300,12 +285,9 @@ class Grid(ctk.CTkFrame):
                 print(f"the node is {(node.x, node.y)}")
                 # Draw Node with red
                 if (self.end_node == 0):
-                    self.canvas.create_oval(node.x - 25, node.y - 25,
-                        node.x + 25, node.y + 25, fill="#CB0404", outline="black")
-                    self.text = self.canvas.create_text(node.x, node.y, 
-                        text=str(node.value), font=("Arial", 12, "bold"), fill="white")
+                    self.canvas.itemconfig(node.oval, fill="#CB0404")
                     self.end_node = node
-           
+
     def launch_graph(self, event):
         print(self.nodes)
         print(self.arcs)
@@ -314,7 +296,16 @@ class Grid(ctk.CTkFrame):
         print("Lanching ...")
 
     def clear_canvas(self, event):
-        self.canvas.delete("all")
+        # delete all nodes
+        for node in self.nodes:
+            self.canvas.delete(node.oval)
+            self.canvas.delete(node.text)
+        
+        # delete arcs
+        for arc in self.arcs:
+            self.canvas.delete(arc.oval)
+            self.canvas.delete(arc.text)
+
 
 class App(ctk.CTk):
     def __init__(self):
