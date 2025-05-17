@@ -21,6 +21,20 @@ def set_mode(new_mode):
     if 'mode_label' in globals() and mode_label is not None:
         mode_label.configure(text=f"Mode: {new_mode}")
 
+class GraphController:
+    def __init__(self):
+        self.grid = None  # Will be set later
+        self.current_mode = "null"
+
+    def set_grid(self, grid):
+        self.grid = grid
+
+    def set_mode(self, new_mode):
+        self.current_mode = new_mode
+
+    def clear_canvas(self):
+        if self.grid:
+            self.grid.clear_canvas()
 
 class Buttons(ctk.CTkFrame):
     def __init__(self, parent):
@@ -31,6 +45,7 @@ class Buttons(ctk.CTkFrame):
         self.rowconfigure((0, 1, 2, 3), weight=1)
 
         def add_node():
+            print("Add Mode Mode")
             set_mode("Add Node")
 
         def add_arcs():
@@ -46,6 +61,7 @@ class Buttons(ctk.CTkFrame):
             set_mode("Launch")
 
         def clear():
+            print("Clear Mode")
             set_mode("Clear")
  
         def save_graph():
@@ -170,6 +186,7 @@ class Grid(ctk.CTkFrame):
 
         def on_canvas_click(event):
             if current_mode == "Add Node":
+                print("Hello you can add nodes")
                 self.add_node(event)
             if current_mode == "Add Arcs":
                 self.add_arc(event)
@@ -178,7 +195,9 @@ class Grid(ctk.CTkFrame):
             if current_mode == "Define End":
                 self.define_end(event)
             if current_mode == "Launch":
-                self.launch(event)
+                self.launch_graph(event)
+            if current_mode == "Clear":
+                self.clear_canvas(event)
         self.canvas.bind("<Button-1>", on_canvas_click)
 
 
@@ -273,7 +292,7 @@ class Grid(ctk.CTkFrame):
                     self.text = self.canvas.create_text(node.x, node.y, 
                         text=str(node.value), font=("Arial", 12, "bold"), fill="white")
                     self.start_node = node
-        
+
     def define_end(self, event):
         for node in self.nodes:
             distance = ((node.x - event.x)**2 + (node.y - event.y)**2)**0.5
@@ -287,13 +306,15 @@ class Grid(ctk.CTkFrame):
                         text=str(node.value), font=("Arial", 12, "bold"), fill="white")
                     self.end_node = node
            
-    def launch(self, event):
+    def launch_graph(self, event):
         print(self.nodes)
         print(self.arcs)
         print(self.start_node)
         print(self.end_node)
-        print("Lanching ...")     
+        print("Lanching ...")
 
+    def clear_canvas(self, event):
+        self.canvas.delete("all")
 
 class App(ctk.CTk):
     def __init__(self):
@@ -306,7 +327,7 @@ class App(ctk.CTk):
         # Grid The Window
         self.columnconfigure((0, 1), weight=1)
         self.rowconfigure(0, weight=1)
-
+        
         # Make Left And Right Frames
         self.menu_frame = Menu(self, fg_color="#EEEEEE")
         self.menu_frame.grid(column=0, row=0, sticky="nswe", pady=10, padx=10)
