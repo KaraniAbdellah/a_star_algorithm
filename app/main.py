@@ -149,9 +149,52 @@ class Node:
         self.oval = canvas.create_oval(x - 25, y - 25, x + 25, y + 25, fill="#1B56FD", outline="black")
         self.text = canvas.create_text(x, y, text=str(node_value), font=("Arial", 12, "bold"), fill="white")
 
+
 class Arc:
-    def __init__(self, canvas):
-        # We Create arcs Here
+    def __init__(self, canvas, n1, n2, weight):
+        self.canvas = canvas
+        self.n1 = n1
+        self.n2 = n2
+        self.weight = weight
+        self.weighted = 10
+        
+        # Create line between two nodes
+        self.line = self.canvas.create_line(
+            n1.x + 25, n1.y, 
+            n2.x - 25, n2.y, 
+            width=2, 
+            fill="black", 
+            arrow="last", 
+            arrowshape=(10, 12, 5)
+        )
+
+        # Get mid distance between n1 and n2
+        mid_x = (n1.x + n2.x) / 2
+        mid_y = (n1.y + n2.y) / 2
+
+        # Create temporary text to calculate bbox
+        self.temp_text = self.canvas.create_text(
+            mid_x, mid_y, text=weight,
+            font=("Arial", 12, "bold")
+        )
+        
+        bbox = self.canvas.bbox(self.temp_text)
+        self.canvas.delete(self.temp_text)
+
+        # Add a rectangle background to weight
+        padding = 4
+        self.rect = self.canvas.create_rectangle(
+            bbox[0] - padding, bbox[1] - padding,
+            bbox[2] + padding, bbox[3] + padding,
+            fill="white", outline=""
+        )
+
+        # Draw text on top
+        self.text = self.canvas.create_text(
+            mid_x, mid_y, text=weight,
+            fill="blue", font=("Arial", 12, "bold")
+        )
+
 
 class Grid(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
@@ -202,6 +245,7 @@ class Grid(ctk.CTkFrame):
         self.nodes.append(new_node)
         self.node_counter += 1
 
+
     def add_arc(self, event):            
         for node in self.nodes:
             distance = ((node.x - event.x)**2 + (node.y - event.y)**2)**0.5
@@ -210,63 +254,49 @@ class Grid(ctk.CTkFrame):
                 if len(self.selected_nodes) == 2:
                     n1, n2 = self.selected_nodes
 
-                    # check if n1 already exit in self.arcs
+                    # Check if arc already exists
+                    arc_exists = False
                     for arc in self.arcs:
-                        if arc["n1"].x == n1.x and arc["n2"].x == n2.x:
-                        # or arc["n2"].x == n1.x and arc["n1"].x == n2.x:
-                            messagebox.showwarning("Warnning", "Arcs Already Exit")
-                            print("The Arcs Already Exit")
-                            self.selected_nodes = []
-                            return
+                        if (arc["n1"] == n1 and arc["n2"] == n2):
+                            arc_exists = True
+                            break
+                    
+                    if arc_exists:
+                        messagebox.showwarning("Warning", "Arc Already Exists")
+                        print("The Arc Already Exists")
+                        self.selected_nodes = []
+                        return
 
-                    weight = 0
-                    while (weight == 0):
-                        weight = simpledialog.askstring(
-                            "Arc Weight",
-                            f"Enter weight != 0 between Node {n1.value} and Node {n2.value}:"
-                        )
-                        weight = int(weight)
+                    # Get weight from user
+                    try:
+                        weight = 0
+                        while weight == 0:
+                            weight_str = simpledialog.askstring(
+                                "Arc Weight",
+                                f"Enter weight != 0 between Node {n1.value} and Node {n2.value}:"
+                            )
+                            
+                            if weight_str is None:  # User clicked cancel
+                                self.selected_nodes = []
+                                return
+                                
+                            weight = int(weight_str)
+                            
+                    except (ValueError, TypeError):
+                        messagebox.showerror("Error", "Please enter a valid integer")
+                        self.selected_nodes = []
+                        return
 
-                    # Create line between two node
-                    self.canvas.create_line(
-                        n1.x + 25, n1.y, n2.x - 25, n2.y,
-                        width=2, fill="black", arrow="last", arrowshape=(10, 12, 5)
-                    )
-
-                    # get mid distance between n1 and n2
-                    mid_x = (n1.x + n2.x) / 2
-                    mid_y = (n1.y + n2.y) / 2
-
-                    # Create Weight
-                    temp_text = self.canvas.create_text(
-                        mid_x, mid_y, text=weight,
-                        font=("Arial", 12, "bold")
-                    )
-                    bbox = self.canvas.bbox(temp_text)
-                    self.canvas.delete(temp_text)
-
-                    # Add a rectangle background to weight
-                    padding = 4
-                    self.canvas.create_rectangle(
-                        bbox[0] - padding, bbox[1] - padding,
-                        bbox[2] + padding, bbox[3] + padding,
-                        fill="white", outline=""
-                    )
-
-                    # Draw text on top
-                    self.canvas.create_text(
-                        mid_x, mid_y, text=weight,
-                        fill="blue", font=("Arial", 12, "bold")
-                    )
+                    # Create the arc
+                    new_arc = Arc(self.canvas, n1, n2, weight=weight)
 
                     # Save arc info
-                    self.arcs.append({"n1": n1, "n2": n2, "weight": weight})
+                    self.arcs.append({"n1": n1, "n2": n2, "weight": weight, "arc_obj": new_arc})
                     
-                    # Save Arcs in node
-                    print(self.arcs[0]["n1"].x)
-                    print(self.arcs[0]["n1"].y)
+                    # Reset selected nodes
                     self.selected_nodes = []
                 break
+
 
     def define_start(self, event):
         for node in self.nodes:
@@ -278,6 +308,7 @@ class Grid(ctk.CTkFrame):
                     self.canvas.itemconfig(node.oval, fill="#ACC572")
                     self.start_node = node
 
+
     def define_end(self, event):
         for node in self.nodes:
             distance = ((node.x - event.x)**2 + (node.y - event.y)**2)**0.5
@@ -288,6 +319,29 @@ class Grid(ctk.CTkFrame):
                     self.canvas.itemconfig(node.oval, fill="#CB0404")
                     self.end_node = node
 
+    def clear_canvas(self, event):
+        # Delete all nodes
+        for node in self.nodes:
+            self.canvas.delete(node.oval)
+            self.canvas.delete(node.text)
+        
+        # Delete all arcs
+        for arc in self.arcs:
+            arc_obj = arc.get("arc_obj")
+            if arc_obj:
+                self.canvas.delete(arc_obj.line)
+                self.canvas.delete(arc_obj.rect)
+                self.canvas.delete(arc_obj.text)
+
+        # Reset all Variables
+        self.nodes = []
+        self.arcs = []
+        self.selected_nodes = []
+        self.node_counter = 1
+        self.start_node = 0
+        self.end_node = 0
+
+
     def launch_graph(self, event):
         print(self.nodes)
         print(self.arcs)
@@ -295,16 +349,7 @@ class Grid(ctk.CTkFrame):
         print(self.end_node)
         print("Lanching ...")
 
-    def clear_canvas(self, event):
-        # delete all nodes
-        for node in self.nodes:
-            self.canvas.delete(node.oval)
-            self.canvas.delete(node.text)
-        
-        # delete arcs
-        for arc in self.arcs:
-            self.canvas.delete(arc.oval)
-            self.canvas.delete(arc.text)
+
 
 
 class App(ctk.CTk):
