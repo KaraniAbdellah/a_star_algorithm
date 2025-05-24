@@ -1,6 +1,8 @@
 import customtkinter as ctk 
 from tkinter import simpledialog # for popups
 from tkinter import messagebox
+import math
+
 
 # Start Function
 def show_logs():
@@ -150,49 +152,45 @@ class Node:
         self.text = canvas.create_text(x, y, text=str(node_value), font=("Arial", 12, "bold"), fill="white")
 
 
+
 class Arc:
     def __init__(self, canvas, n1, n2, weight):
         self.canvas = canvas
         self.n1 = n1
         self.n2 = n2
         self.weight = weight
-        self.weighted = 10
-        
-        # Create line between two nodes
-        self.line = self.canvas.create_line(
-            n1.x + 25, n1.y, 
-            n2.x - 25, n2.y, 
-            width=2, 
-            fill="black", 
-            arrow="last", 
-            arrowshape=(10, 12, 5)
-        )
 
-        # Get mid distance between n1 and n2
+        # Find angle between nodes
+        angle = math.atan2(n2.y - n1.y, n2.x - n1.x)
+        
+        # Start point (edge of first node)
+        start_x = n1.x + 25 * math.cos(angle)
+        start_y = n1.y + 25 * math.sin(angle)
+        
+        # End point (edge of second node)
+        end_x = n2.x - 25 * math.cos(angle)
+        end_y = n2.y - 25 * math.sin(angle)
+        
+        # Draw arrow line
+        self.line = self.canvas.create_line(
+            start_x, start_y, end_x, end_y,
+            width=2, fill="black", arrow="last"
+        )
+        
+        # Draw weight in middle
         mid_x = (n1.x + n2.x) / 2
         mid_y = (n1.y + n2.y) / 2
-
-        # Create temporary text to calculate bbox
-        self.temp_text = self.canvas.create_text(
-            mid_x, mid_y, text=weight,
-            font=("Arial", 12, "bold")
+        
+        # White background for weight text
+        self.rect = self.canvas.create_rectangle(
+            mid_x - 15, mid_y - 10, mid_x + 15, mid_y + 10,
+            fill="white", outline="gray"
         )
         
-        bbox = self.canvas.bbox(self.temp_text)
-        self.canvas.delete(self.temp_text)
-
-        # Add a rectangle background to weight
-        padding = 4
-        self.rect = self.canvas.create_rectangle(
-            bbox[0] - padding, bbox[1] - padding,
-            bbox[2] + padding, bbox[3] + padding,
-            fill="white", outline=""
-        )
-
-        # Draw text on top
+        # Weight text
         self.text = self.canvas.create_text(
-            mid_x, mid_y, text=weight,
-            fill="blue", font=("Arial", 12, "bold")
+            mid_x, mid_y, text=str(weight),
+            font=("Arial", 10, "bold"), fill="blue"
         )
 
 
