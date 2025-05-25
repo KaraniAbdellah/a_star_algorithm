@@ -54,6 +54,8 @@ edges = {
 }
 
 
+# Please use Adjacency list and PILE
+
 
 def heuristic(goal_node: int) -> dict:
     h_nodes = {}
