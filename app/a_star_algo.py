@@ -68,20 +68,43 @@ def heuristic(goal_node: int) -> dict:
 
 
 
-def a_star_algo(start: int, goal: int) -> list[int]:
+def a_star_algo(start: int, goal: int, old_node_costs) -> list[int]:
+    if (start == goal): return []
     h_list = heuristic(goal)
     print(h_list)
 
-    # neighbers of node
+    selected_node = start
+    node_costs = []
     for neighber in edges[start]:
         cost = neighber[1] + h_list[neighber[0]]
         print(f"cost between {start} and {neighber[0]} is {cost}")
-
-        
+        # get the small
+        node_costs.append({"cost": cost, "node": neighber[0]})
+    print(node_costs)
     
-    return 1
+    # get the old node_costs
+    print(old_node_costs)
+    for old_node_cost in old_node_costs:
+        node_costs.append(old_node_cost)
 
 
-a_star_algo(1, 4)
+    selected_node = node_costs[0]["node"]
+    cost_of_selected_node = node_costs[0]["cost"]
+    for node_with_cost in node_costs:
+        if (cost_of_selected_node > node_with_cost["cost"]):
+            selected_node = node_with_cost["node"]
+            cost_of_selected_node = node_with_cost["cost"]
+            node_costs.pop(node_costs.index(node_with_cost))
+
+    print(f"We Select Node {selected_node}")
+    print(node_costs)
+    print("----------------------------")
+    
+    if (goal != selected_node):
+        a_star_algo(selected_node, goal=goal, old_node_costs=node_costs)
+    
+
+
+a_star_algo(1, 4, [])
    
 
