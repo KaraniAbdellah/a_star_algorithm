@@ -1,5 +1,7 @@
 # https://www.datacamp.com/tutorial/a-star-algorithm
 
+from math import sqrt, pow
+
 '''
     A* based in this formula:
         f(n) = g(n) + h(n)
@@ -9,49 +11,77 @@
         it is like function that provide estimate cost 
         for each node (from initial node to goal).
 
-    The A* algorithm maintains two essential lists:
-        Open list:
-            Contains nodes that need to be evaluated
-            Sorted by f(n) value (lowest first)
-            New nodes are added as they're discovered
-        Closed list:
-            Contains already evaluated nodes
-            Helps avoid re-evaluating nodes
-            Used to reconstruct the final path
+    For Calculate The Heuristic we can user:
+        - Manhattan distance
+        - Euclidean distance
+    
+   Steps:
+        - make Heuristic function for each node --> node(x, y)
+        - 
+'''
 
-    A* selects the node with the lowest f(n) value 
-    from the open list, and moves it to the closed list
-    until it reaches the goal node or determines no path exists.
+'''
+nodes = [
+    {"value": 0, "coord": (34, 23)}, {"value": 1, "coord": (56, 98)},
+    {"value": 2, "coord": (62, 1)},  {"value": 3, "coord": (233, 34)}
+]
+arcs = [
+    {"nodes": (0, 2), "weight": 12}, {"nodes": (0, 1), "weight": 12},
+    {"nodes": (0, 3), "weight": 12}
+]
+
+print(neighber)
+    print(h_list[edge])
+    print(neighber)
+    print(cost)
+    print(f"cost between {edge} and {neighber[0]} is {cost}")
+    print("-----")
 '''
 
 
-# heuristic function
-def heuristic(start, goal):
-    return 0
+# each nodes has tuple is coordinates
+nodes = {
+    1: (34, 23), 2: (56, 98),
+    3: (62, 1), 4: (233, 34)
+}
 
-# Algorithmic Solution
-def a_star_algo(start, goal):
-    openList = [start] # Nodes to be evaluated
-    closedList = [] # Nodes already evaluate
+# each node link with another node with weight
+edges = {
+    1: [(3, 12), (2, 7)],
+    2: [(3, 10)],
+    3: [(4, 5)],
+    4: [(1, 3)]
+}
 
-    start.g = 0 # Cost from start to start is 0
-    start.h = heuristic(start, goal) # Estimate to goal
-    start.parent = None # For path reconstruction
-    
-    while (openList is not empty):
-        # Get node with lowest f value - implement using a priority queue
-        # for faster retrieval of the best node
-        current = node in openList with lowest f value
+
+
+def heuristic(goal_node: int) -> dict:
+    h_nodes = {}
+    for node in nodes:
+        x1 = nodes[node][0]
+        y1 = nodes[node][1]
+        x2_g = nodes[goal_node][0]
+        y2_g = nodes[goal_node][0]
+        euclidean_distance = sqrt(pow((x1 - x2_g), 2) + pow((y1 - y2_g), 2))
+        h_nodes[node] = int(euclidean_distance)
+    return h_nodes
+
+
+
+def a_star_algo(start: int, goal: int) -> list[int]:
+    h_list = heuristic(goal)
+    print(h_list)
+
+    # neighbers of node
+    for neighber in edges[start]:
+        cost = neighber[1] + h_list[neighber[0]]
+        print(f"cost between {start} and {neighber[0]} is {cost}")
 
         
-        
-         
     
-    
+    return 1
 
 
-
-# Python code
-
-
+a_star_algo(1, 4)
+   
 

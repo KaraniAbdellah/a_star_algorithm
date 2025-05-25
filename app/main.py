@@ -152,7 +152,6 @@ class Node:
         self.text = canvas.create_text(x, y, text=str(node_value), font=("Arial", 12, "bold"), fill="white")
 
 
-
 class Arc:
     def __init__(self, canvas, n1, n2, weight):
         self.canvas = canvas
@@ -242,7 +241,7 @@ class Grid(ctk.CTkFrame):
         new_node = Node(self.canvas, event.x, event.y, self.node_counter)
         self.nodes.append(new_node)
         self.node_counter += 1
-
+        
 
     def add_arc(self, event):            
         for node in self.nodes:
@@ -289,7 +288,7 @@ class Grid(ctk.CTkFrame):
                     new_arc = Arc(self.canvas, n1, n2, weight=weight)
 
                     # Save arc info
-                    self.arcs.append({"n1": n1, "n2": n2, "weight": weight, "arc_obj": new_arc})
+                    self.arcs.append(new_arc)
                     
                     # Reset selected nodes
                     self.selected_nodes = []
@@ -318,18 +317,25 @@ class Grid(ctk.CTkFrame):
                     self.end_node = node
 
     def clear_canvas(self, event):
+        for node in self.nodes:
+            print(node.value, node.x, node.y)
+            print("------------------------")
+
+        for arc in self.arcs:
+            print((arc.n1.x, arc.n1.y), (arc.n2.x, arc.n2.y), arc.weight)
+            print("------------------------")
+
         # Delete all nodes
         for node in self.nodes:
             self.canvas.delete(node.oval)
             self.canvas.delete(node.text)
-        
+
         # Delete all arcs
         for arc in self.arcs:
-            arc_obj = arc.get("arc_obj")
-            if arc_obj:
-                self.canvas.delete(arc_obj.line)
-                self.canvas.delete(arc_obj.rect)
-                self.canvas.delete(arc_obj.text)
+             self.canvas.delete(arc.line)
+             self.canvas.delete(arc.rect)
+             self.canvas.delete(arc.text)
+            
 
         # Reset all Variables
         self.nodes = []
