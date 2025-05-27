@@ -350,51 +350,93 @@ class Grid(ctk.CTkFrame):
         self.end_node = 0
 
     def launch_graph(self, event):
-        print(self.start_node)
-        print(self.end_node)
         if (self.start_node == 0 or self.end_node == 0 or len(self.arcs) == 0):
             messagebox.showinfo("Info", "Select Start Node and End Node and Arcs")
+        elif (self.start_node == self.end_node):
+            messagebox.showinfo("Info", "Start and End nodes cannot be the same")
         else:
-            a_star_algo(canvas=self.canvas, nodes=self.nodes, arcs=self.arcs,
-                start_node=self.start_node, end_node=self.end_node)
-            print("Lanching ...")
+            try:
+                a_star_algo(canvas=self.canvas, nodes=self.nodes, arcs=self.arcs,
+                    start_node=self.start_node, end_node=self.end_node)
+                print("Algorithm completed!")
+            except Exception as e:
+                print(f"Error running A* algorithm: {e}")
+                messagebox.showerror("Error", f"Algorithm failed: {str(e)}")
+
+
+def path_f_cost(path: list[tuple]) -> tuple:
+    g_cost = 0
+    for(node, cost) in path:
+        g_cost += cost
+    last_node = path[-1][0]
+    h_cost = h_table[str(last_node)]
+    f_cost = g_cost + h_cost
+    return (f_cost, last_node)
+
+
+
+def find_shortest_path(graph, start, goal):
+    visited = []
+    queue = [[(start, 0)]]
+    while queue:
+        queue.sort(key=path_f_cost) # sort by f_cost
+        path = queue.pop(0) # get least f_cost
+        node = path[-1][0]
+        if node in visited:
+            continue
+        visited.append(f'{node}')
+        if (node == goal):
+            return path
+        else:
+            adjacent_nodes = graph.get(f'{node}')
+            if (adjacent_nodes):
+                for (node2, cost) in  adjacent_nodes:
+                    new_path = path.copy() # Shallow Copy
+                    new_path.append((node2, cost))
+                    queue.append(new_path)
+    return None
+
 
 
 def a_star_algo(canvas, nodes, arcs, start_node, end_node):
+    global h_table
+    h_table = {}
+    global graph
+    graph = {}
+
     # make heuristic table
-    H_table = {}
     for node in nodes:
         print(node.value)
         x1 = node.x
         y1 = node.y
         xf = end_node.x
-        yf = end_node.x
+        yf = end_node.y
         Euclidean_Distance =  math.sqrt(math.pow((xf - x1), 2) + math.pow((yf - y1), 2))
-        H_table[f'{node.value}'] = int(Euclidean_Distance)
-    print(H_table)
-
-    # make oriented graph
-    graph = {
-        'S': [('A', 1), ('B', 4)],
-        'A': [('B', 2), ('C', 5), ('G', 12)],
-        'B': [('C', 2)],
-        'C': [('G', 3)]
-    }
-
-    # for arc in arcs:
-    #     node = arc.n1.value
-    #     node_linked_with = []
-    #     for arc1 in arcs:
-    #         if (node == arc1.n1)
-    #         # graph[f"{arc.n1.value}"]
-    
-    print("Nodes: ")
+        h_table[f'{node.value}'] = Euclidean_Distance
     for arc in arcs:
-        print(f"{arc.n1.value} linked with {arc.n2.value} with weight {arc.weight}")
-    print(f"Start Node is {start_node.value} and End Node is {end_node.value}")
+        node1 = str(arc.n1.value)
+        node2 = str(arc.n2.value)
+        weight = arc.weight
+        if graph.get(node1) == None: 
+            graph[node1] = []
+        graph[node1].append((node2, weight))
+        
 
-    return
+    shortest_path = find_shortest_path(graph=graph, start=str(start_node.value),
+        goal=str(end_node.value))
+    print("shortest path is: ", shortest_path)
+
+    if shortest_path is None:
+        print("No path found between start and end nodes")
+    else:
+        # Calculate total cost
+        total_cost = sum(cost for node, cost in shortest_path)
+        print(f"Total path cost: {total_cost}")
+        # Extract just the node sequence
+        node_sequence = [node for node, cost in shortest_path]
+        print(f"Node sequence: {node_sequence}")
     
+        
 
 
 

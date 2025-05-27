@@ -63,7 +63,7 @@ def a_star_search(graph, start, goal):
         print("----------------------------")
         print("----------------------------")
         print("----------------------------")
-
+    return visited
 
 solution = a_star_search(graph=graph, start='S', goal='G')
 print(solution)
