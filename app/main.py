@@ -165,11 +165,11 @@ class Arc:
         # Start point (edge of first node)
         start_x = n1.x + 25 * math.cos(angle)
         start_y = n1.y + 25 * math.sin(angle)
-        
+
         # End point (edge of second node)
         end_x = n2.x - 25 * math.cos(angle)
         end_y = n2.y - 25 * math.sin(angle)
-        
+
         # Draw arrow line
         self.line = self.canvas.create_line(
             start_x, start_y, end_x, end_y,
@@ -185,7 +185,7 @@ class Arc:
             mid_x - 15, mid_y - 10, mid_x + 15, mid_y + 10,
             fill="white", outline="gray"
         )
-        
+
         # Weight text
         self.text = self.canvas.create_text(
             mid_x, mid_y, text=str(weight),
@@ -241,12 +241,13 @@ class Grid(ctk.CTkFrame):
         new_node = Node(self.canvas, event.x, event.y, self.node_counter)
         self.nodes.append(new_node)
         self.node_counter += 1
-        
 
-    def add_arc(self, event):            
+    def add_arc(self, event):
+        node_found = False
         for node in self.nodes:
             distance = ((node.x - event.x)**2 + (node.y - event.y)**2)**0.5
             if distance < 25:
+                node_found = True
                 self.selected_nodes.append(node)
                 if len(self.selected_nodes) == 2:
                     n1, n2 = self.selected_nodes
@@ -254,7 +255,7 @@ class Grid(ctk.CTkFrame):
                     # Check if arc already exists
                     arc_exists = False
                     for arc in self.arcs:
-                        if (arc["n1"] == n1 and arc["n2"] == n2):
+                        if (arc.n1 == n1 and arc.n2 == n2):
                             arc_exists = True
                             break
                     
@@ -294,6 +295,10 @@ class Grid(ctk.CTkFrame):
                     self.selected_nodes = []
                 break
 
+        # If no node was found at the clicked location
+        if not node_found:
+            messagebox.showinfo("Info", "Please select a node")
+            print("Please select a node")
 
     def define_start(self, event):
         for node in self.nodes:
@@ -304,7 +309,6 @@ class Grid(ctk.CTkFrame):
                 if (self.start_node == 0):
                     self.canvas.itemconfig(node.oval, fill="#ACC572")
                     self.start_node = node
-
 
     def define_end(self, event):
         for node in self.nodes:
@@ -345,14 +349,52 @@ class Grid(ctk.CTkFrame):
         self.start_node = 0
         self.end_node = 0
 
-
     def launch_graph(self, event):
-        print(self.nodes)
-        print(self.arcs)
         print(self.start_node)
         print(self.end_node)
-        print("Lanching ...")
+        if (self.start_node == 0 or self.end_node == 0 or len(self.arcs) == 0):
+            messagebox.showinfo("Info", "Select Start Node and End Node and Arcs")
+        else:
+            a_star_algo(canvas=self.canvas, nodes=self.nodes, arcs=self.arcs,
+                start_node=self.start_node, end_node=self.end_node)
+            print("Lanching ...")
 
+
+def a_star_algo(canvas, nodes, arcs, start_node, end_node):
+    # make heuristic table
+    H_table = {}
+    for node in nodes:
+        print(node.value)
+        x1 = node.x
+        y1 = node.y
+        xf = end_node.x
+        yf = end_node.x
+        Euclidean_Distance =  math.sqrt(math.pow((xf - x1), 2) + math.pow((yf - y1), 2))
+        H_table[f'{node.value}'] = int(Euclidean_Distance)
+    print(H_table)
+
+    # make oriented graph
+    graph = {
+        'S': [('A', 1), ('B', 4)],
+        'A': [('B', 2), ('C', 5), ('G', 12)],
+        'B': [('C', 2)],
+        'C': [('G', 3)]
+    }
+
+    # for arc in arcs:
+    #     node = arc.n1.value
+    #     node_linked_with = []
+    #     for arc1 in arcs:
+    #         if (node == arc1.n1)
+    #         # graph[f"{arc.n1.value}"]
+    
+    print("Nodes: ")
+    for arc in arcs:
+        print(f"{arc.n1.value} linked with {arc.n2.value} with weight {arc.weight}")
+    print(f"Start Node is {start_node.value} and End Node is {end_node.value}")
+
+    return
+    
 
 
 
