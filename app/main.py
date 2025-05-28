@@ -2,6 +2,7 @@ import customtkinter as ctk
 from tkinter import simpledialog # for popups
 from tkinter import messagebox
 import math
+from tkinter import filedialog
 
 
 # Define Global Variable For Mode
@@ -54,11 +55,8 @@ class Buttons(ctk.CTkFrame):
             print("Clear Mode")
             set_mode("Clear")
  
-        def save_graph():
+        def save_logs():
             set_mode("Save")
-
-        def load_graph():
-            set_mode("Load")
 
         btns_values = [
             {"value": "Add Nodes", "column": 0, "row": 0, "color": "#328E6E", "function": add_node},
@@ -67,8 +65,7 @@ class Buttons(ctk.CTkFrame):
             {"value": "Define End", "column": 1, "row": 1, "color": "#F7374F", "function": define_end},
             {"value": "Launch", "column": 0, "row": 2, "color": "#8B44AD", "function": launch},
             {"value": "Clear", "column": 1, "row": 2, "color": "#5F7A76", "function": clear},
-            {"value": "Save Graph", "column": 0, "row": 3, "color": "#8B4513", "function": save_graph},
-            {"value": "Load Graph", "column": 1, "row": 3, "color": "#27548A", "function": load_graph},
+            {"value": "Save Graph", "column": 0, "row": 3, "color": "#8B4513", "function": save_logs},
         ]
 
         for btn_value in btns_values:
@@ -224,11 +221,12 @@ class Grid(ctk.CTkFrame):
             if current_mode == "Define End":
                 self.define_end(event)
             if current_mode == "Launch":
-                self.launch_graph(event)
+                self.launch_graph()
             if current_mode == "Clear":
                 self.clear_canvas(event)
+            if (current_mode == "Save"):
+                self.save_logs()
         self.canvas.bind("<Button-1>", on_canvas_click)
-
 
     def add_node(self, event):
         for node in self.nodes:
@@ -356,14 +354,14 @@ class Grid(ctk.CTkFrame):
                     str(arc.n2.value) == node_sequence[i + 1]):
                     self.canvas.itemconfig(arc.line, fill="red", width=4)
 
-    def launch_graph(self, event):
+    def launch_graph(self):
         if (self.start_node == 0 or self.end_node == 0 or len(self.arcs) == 0):
             messagebox.showinfo("Info", "Select Start Node and End Node and Arcs")
         elif (self.start_node == self.end_node):
             messagebox.showinfo("Info", "Start and End nodes cannot be the same")
         else:
             try:
-                node_sequence = a_star_algo(canvas=self.canvas, nodes=self.nodes, arcs=self.arcs,
+                node_sequence = a_star_algo(nodes=self.nodes, arcs=self.arcs,
                     start_node=self.start_node, end_node=self.end_node)
                 if (node_sequence == None):
                     messagebox.showinfo("Info", f"No path found between {self.start_node.value} and {self.end_node.value}")
@@ -374,7 +372,16 @@ class Grid(ctk.CTkFrame):
                 print(f"Error running A* algorithm: {e}")
                 messagebox.showerror("Error", f"Algorithm failed: {str(e)}")
 
+    def save_logs(self):
+        if (content != ""):
+            file_path = filedialog.asksaveasfilename(defaultextension=".txt")
+            if file_path:
+                with open(file_path, "w") as file:
+                    file.write(content)
+        else:
+            messagebox.showwarning("Warning", "Draw Your Graph First")
 
+    
 def path_f_cost(path: list[tuple]) -> tuple:
     g_cost = 0
     for(node, cost) in path:
@@ -409,7 +416,7 @@ def find_shortest_path(graph, start, goal):
 
 
 
-def a_star_algo(canvas, nodes, arcs, start_node, end_node):
+def a_star_algo(nodes, arcs, start_node, end_node):
     global h_table
     h_table = {}
     global graph
