@@ -4,14 +4,6 @@ from tkinter import messagebox
 import math
 
 
-# Start Function
-def show_logs():
-    print("Hello Logs")
-
-def show_adj_matrix():
-    print("Hello Adjacency Matrix")
-
-
 # Define Global Variables For Mode
 current_mode = "null"
 
@@ -81,6 +73,7 @@ class Output(ctk.CTkFrame):
         # Create text box
         self.text_box = ctk.CTkTextbox(self, text_color="black", corner_radius=5)
         self.text_box.pack(side="top", fill="both", expand=True)
+        self.text_box.insert("0.0", "Hello World")
 
 
 class Mode(ctk.CTkFrame):
@@ -106,13 +99,8 @@ class Tabs(ctk.CTkFrame):
         self.rowconfigure(0, weight=1)
 
         # Create tab buttons
-        self.logs_btn = ctk.CTkButton(master=self, text="Logs", 
-            command=show_logs, fg_color="#4682B4", corner_radius=2)
-        self.adj_matrix_btn = ctk.CTkButton(master=self, text="Adjacency Matrix", 
-            command=show_adj_matrix, fg_color="#5F7A76", corner_radius=2)
-
-        self.logs_btn.grid(column=0, row=0, sticky="nse")
-        self.adj_matrix_btn.grid(column=1, row=0, sticky="nsw")
+        self.logs_btn = ctk.CTkLabel(master=self, text="Logs & Adjacency List", fg_color="#4682B4")
+        self.logs_btn.grid(column=0, row=0, sticky="nswe", columnspan=2)
 
 
 class Menu(ctk.CTkFrame):
