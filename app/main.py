@@ -4,8 +4,11 @@ from tkinter import messagebox
 import math
 
 
-# Define Global Variables For Mode
+# Define Global Variable For Mode
 current_mode = "null"
+
+# Define Global Varaible For Logs
+content = ""
 
 
 def set_mode(new_mode):
@@ -14,6 +17,14 @@ def set_mode(new_mode):
 
     if 'mode_label' in globals() and mode_label is not None:
         mode_label.configure(text=f"Mode: {new_mode}")
+
+def set_content(new_content):
+    global content
+    content = new_content
+    
+    if 'output_instance' in globals() and output_instance is not None:
+        output_instance.insert("end", new_content)
+
 
 class Buttons(ctk.CTkFrame):
     def __init__(self, parent):
@@ -64,16 +75,17 @@ class Buttons(ctk.CTkFrame):
             self.btn = ctk.CTkButton(master=self, fg_color=btn_value["color"], 
                 text=btn_value["value"], corner_radius=2, command=btn_value['function'])
             self.btn.grid(column=btn_value["column"], row=btn_value["row"], padx=4, pady=4, sticky="nsew")
-        
+
 
 class Output(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)
+        global output_instance
 
         # Create text box
-        self.text_box = ctk.CTkTextbox(self, text_color="black", corner_radius=5)
-        self.text_box.pack(side="top", fill="both", expand=True)
-        self.text_box.insert("0.0", "Hello World")
+        output_instance = ctk.CTkTextbox(self, text_color="black", corner_radius=5, font=("JetBrains Mono", 16))
+        output_instance.pack(side="top", fill="both", expand=True)
+        output_instance.insert("0.0", content)
 
 
 class Mode(ctk.CTkFrame):
@@ -99,7 +111,7 @@ class Tabs(ctk.CTkFrame):
         self.rowconfigure(0, weight=1)
 
         # Create tab buttons
-        self.logs_btn = ctk.CTkLabel(master=self, text="Logs & Adjacency List", fg_color="#4682B4")
+        self.logs_btn = ctk.CTkLabel(master=self, text="Results", fg_color="#4682B4")
         self.logs_btn.grid(column=0, row=0, sticky="nswe", columnspan=2)
 
 
@@ -425,10 +437,6 @@ def a_star_algo(canvas, nodes, arcs, start_node, end_node):
         graph[node1].append((node2, weight))
 
 
-    ################## We Need to Print in Logs and List Adjacency  ##################
-    # print(f"h_table: {h_table}")
-    # print(f"graph: {graph}")
-
     shortest_path = find_shortest_path(graph=graph, start=str(start_node.value),
         goal=str(end_node.value))
     print("shortest path is: ", shortest_path)
@@ -437,15 +445,19 @@ def a_star_algo(canvas, nodes, arcs, start_node, end_node):
         print("No path found between start and end nodes")
         return None
     else:
-        ################### We Need to Print in Logs and List Adjacency  ##################
         total_cost = sum(cost for node, cost in shortest_path)
-        print(f"Total path cost: {total_cost}")
         node_sequence = [node for node, cost in shortest_path]
-        print(f"Node sequence: {node_sequence}")
-
+        set_content(f"""Algorithm Results:\n
+        ** Heuristic Table:
+        {h_table}:\n
+        ** Graph [Adjacency List]:
+        {graph}\n
+        ** Node Sequence:
+        {' → '.join(map(str, node_sequence))}\n
+        ** Total Path Cost From {start_node.value} to {end_node.value}: {total_cost}\n
+        """)
         return node_sequence
-        
-    
+
     
         
 
