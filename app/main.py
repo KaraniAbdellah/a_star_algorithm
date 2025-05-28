@@ -349,6 +349,13 @@ class Grid(ctk.CTkFrame):
         self.start_node = 0
         self.end_node = 0
 
+    def draw_arcs(self, node_sequence):
+        for i in range(len(node_sequence) - 1):
+            for arc in self.arcs:
+                if (str(arc.n1.value) == node_sequence[i] and 
+                    str(arc.n2.value) == node_sequence[i + 1]):
+                    self.canvas.itemconfig(arc.line, fill="red", width=4)
+
     def launch_graph(self, event):
         if (self.start_node == 0 or self.end_node == 0 or len(self.arcs) == 0):
             messagebox.showinfo("Info", "Select Start Node and End Node and Arcs")
@@ -356,9 +363,13 @@ class Grid(ctk.CTkFrame):
             messagebox.showinfo("Info", "Start and End nodes cannot be the same")
         else:
             try:
-                a_star_algo(canvas=self.canvas, nodes=self.nodes, arcs=self.arcs,
+                node_sequence = a_star_algo(canvas=self.canvas, nodes=self.nodes, arcs=self.arcs,
                     start_node=self.start_node, end_node=self.end_node)
-                print("Algorithm completed!")
+                if (node_sequence == None):
+                    messagebox.showinfo("Info", f"No path found between {self.start_node.value} and {self.end_node.value}")
+                else:
+                    self.draw_arcs(node_sequence=node_sequence)
+                    
             except Exception as e:
                 print(f"Error running A* algorithm: {e}")
                 messagebox.showerror("Error", f"Algorithm failed: {str(e)}")
@@ -411,8 +422,12 @@ def a_star_algo(canvas, nodes, arcs, start_node, end_node):
         y1 = node.y
         xf = end_node.x
         yf = end_node.y
-        Euclidean_Distance =  math.sqrt(math.pow((xf - x1), 2) + math.pow((yf - y1), 2))
+        # Euclidean_Distance =  math.sqrt(math.pow((x1 - xf), 2) + math.pow((y1 - yf), 2))
+        # Euclidean_Distance = abs(x1 -xf) + abs(y1 -yf) / 100
+        Euclidean_Distance = 0
         h_table[f'{node.value}'] = Euclidean_Distance
+
+    # make graph
     for arc in arcs:
         node1 = str(arc.n1.value)
         node2 = str(arc.n2.value)
@@ -420,7 +435,11 @@ def a_star_algo(canvas, nodes, arcs, start_node, end_node):
         if graph.get(node1) == None: 
             graph[node1] = []
         graph[node1].append((node2, weight))
-        
+
+
+    ################## We Need to Print in Logs and List Adjacency  ##################
+    # print(f"h_table: {h_table}")
+    # print(f"graph: {graph}")
 
     shortest_path = find_shortest_path(graph=graph, start=str(start_node.value),
         goal=str(end_node.value))
@@ -428,13 +447,17 @@ def a_star_algo(canvas, nodes, arcs, start_node, end_node):
 
     if shortest_path is None:
         print("No path found between start and end nodes")
+        return None
     else:
-        # Calculate total cost
+        ################### We Need to Print in Logs and List Adjacency  ##################
         total_cost = sum(cost for node, cost in shortest_path)
         print(f"Total path cost: {total_cost}")
-        # Extract just the node sequence
         node_sequence = [node for node, cost in shortest_path]
         print(f"Node sequence: {node_sequence}")
+
+        return node_sequence
+        
+    
     
         
 
