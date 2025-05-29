@@ -22,10 +22,10 @@ def set_mode(new_mode):
 def set_content(new_content):
     global content
     content = new_content
-    
-    if 'output_instance' in globals() and output_instance is not None:
-        output_instance.insert("end", new_content)
 
+    if 'output_instance' in globals() and output_instance is not None:
+        output_instance.delete("1.0", "end") # delete first the content
+        output_instance.insert("1.0", new_content)  # Insert New Content
 
 class Buttons(ctk.CTkFrame):
     def __init__(self, parent):
@@ -346,6 +346,8 @@ class Grid(ctk.CTkFrame):
         self.node_counter = 1
         self.start_node = 0
         self.end_node = 0
+        
+        set_content("")
 
     def draw_arcs(self, node_sequence):
         for i in range(len(node_sequence) - 1):

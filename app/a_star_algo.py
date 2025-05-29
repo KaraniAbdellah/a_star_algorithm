@@ -31,23 +31,18 @@ def path_f_cost(path: list[tuple]) -> tuple:
     f_cost = g_cost + h_cost
     return (f_cost, last_node)
 
-# path = [('S', 0), ('A', 1), ('C', 5)]
-
+path = [('S', 0), ('A', 1), ('C', 5)]
 
 
 def a_star_search(graph, start, goal):
     visited = []
-    queue = [[(start, 0)]]
+    queue = [[(start, 0)]] # [('S', 0)] --> f(S) = g(S) + h(7) = (7, 'S')
     while queue:
-        print(f"old queue: {queue}")
         # [(8,'B'), (8,'C'), (13,'G'), ('C', 7)]
         queue.sort(key=path_f_cost) # sort by f_cost
-        print(f"sorted queue: {queue}")
         path = queue.pop(0) # get least f_cost
         node = path[-1][0]
-        print(f"// Selected Node is {node}")
         if node in visited:
-            print(f"// {node} Already Visited")
             continue
         visited.append(node)
         if (node == goal):
@@ -58,11 +53,6 @@ def a_star_search(graph, start, goal):
                 new_path = path.copy() # by reference
                 new_path.append((node2, cost))
                 queue.append(new_path)
-        print(f"new queue: {queue}")
-        print(f"visited: {visited}")
-        print("----------------------------")
-        print("----------------------------")
-        print("----------------------------")
     return visited
 
 solution = a_star_search(graph=graph, start='S', goal='G')
