@@ -394,7 +394,6 @@ def path_f_cost(path: list[tuple]) -> tuple:
     return (f_cost, last_node)
 
 
-
 def find_shortest_path(graph, start, goal):
     visited = []
     queue = [[(start, 0)]]
@@ -415,7 +414,6 @@ def find_shortest_path(graph, start, goal):
                     new_path.append((node2, cost))
                     queue.append(new_path)
     return None
-
 
 
 def a_star_algo(nodes, arcs, start_node, end_node):
@@ -471,7 +469,6 @@ def a_star_algo(nodes, arcs, start_node, end_node):
         
 
 
-
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -494,5 +491,4 @@ class App(ctk.CTk):
 
 app = App()
 app.mainloop()
-
 

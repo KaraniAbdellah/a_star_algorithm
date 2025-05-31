@@ -68,8 +68,6 @@ heuristic(4)
 
 
         
-        
-    
 
 def a_star_algo(start: int, goal: int, selected_nodes: list[int], old_node_costs: list[dict]) -> list[int]:
     if (start == goal): return []
