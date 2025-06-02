@@ -73,8 +73,11 @@ class Buttons(ctk.CTkFrame):
                 text=btn_value["value"], corner_radius=2, command=btn_value['function'])
             self.btn.grid(column=btn_value["column"], row=btn_value["row"], padx=4, pady=4, sticky="nsew")
 
+# Output inherits from CTkFrame
+# parent is Menu Frame
+# self is Output instance [a CTkFrame]
 
-class Output(ctk.CTkFrame):
+class Output(ctk.CTkFrame): 
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)
         global output_instance
