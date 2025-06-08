@@ -330,6 +330,10 @@ class Grid(ctk.CTkFrame):
                     self.end_node = node
 
     def clear_canvas(self, event):
+        if (len(self.nodes) == 0):
+            messagebox.showinfo("Info", "Please select a node")
+            print("Please select a node")
+            return
         for node in self.nodes:
             print(node.value, node.x, node.y)
             print("------------------------")
