@@ -302,6 +302,10 @@ class Grid(ctk.CTkFrame):
             print("Please select a node")
 
     def define_start(self, event):
+        if (len(self.nodes) == 0):
+            messagebox.showinfo("Info", "Please select a node")
+            print("Please select a node")
+            return
         for node in self.nodes:
             distance = ((node.x - event.x)**2 + (node.y - event.y)**2)**0.5
             if distance < 25:
@@ -312,6 +316,10 @@ class Grid(ctk.CTkFrame):
                     self.start_node = node
 
     def define_end(self, event):
+        if (len(self.nodes) == 0):
+            messagebox.showinfo("Info", "Please select a node")
+            print("Please select a node")
+            return
         for node in self.nodes:
             distance = ((node.x - event.x)**2 + (node.y - event.y)**2)**0.5
             if distance < 25:

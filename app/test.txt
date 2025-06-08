@@ -1,0 +1,14 @@
+Algorithm Results:
+
+        ** Heuristic Table:
+        {'1': 0, '2': 0}:
+
+        ** Graph [Adjacency List]:
+        {'1': [('2', 4)]}
+
+        ** Node Sequence:
+        1 → 2
+
+        ** Total Path Cost From 1 to 2: 4
+
+        

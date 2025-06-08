@@ -1,4 +1,4 @@
-# oriented graph
+# Oriented graph
 graph = {
     'S': [('A', 1), ('B', 4)],
     'A': [('B', 2), ('C', 5), ('G', 12)],
@@ -17,7 +17,7 @@ H_table = {
 
 # helper function: Path F-cost
 '''
-    Between S and A --> 8
+    Between S and A:
         f(C) = g(C) + h(C)
         f(C) = (0 + 1 + 5) + 2
         f(C) = 8 --> tuple(8, 'C')
@@ -32,15 +32,15 @@ def path_f_cost(path: list[tuple]) -> tuple:
     return (f_cost, last_node)
 
 path = [('S', 0), ('A', 1), ('C', 5)]
+path_f_cost(path=path)
 
 
 def a_star_search(graph, start, goal):
     visited = []
-    queue = [[(start, 0)]] # [('S', 0)] --> f(S) = g(S) + h(7) = (7, 'S')
+    queue = [[(start, 0)]]
     while queue:
-        # [(8,'B'), (8,'C'), (13,'G'), ('C', 7)]
-        queue.sort(key=path_f_cost) # sort by f_cost
-        path = queue.pop(0) # get least f_cost
+        queue.sort(key=path_f_cost)
+        path = queue.pop(0)
         node = path[-1][0]
         if node in visited:
             continue
@@ -55,9 +55,10 @@ def a_star_search(graph, start, goal):
                 queue.append(new_path)
     return visited
 
+
 solution = a_star_search(graph=graph, start='S', goal='G')
 print(solution)
-print(f"Cost of Solution is ", path_f_cost(solution)[0])
+print(f"Cost is ", path_f_cost(solution)[0])
 
 
 
