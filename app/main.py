@@ -31,7 +31,7 @@ class Buttons(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
 
-        # Grid The Buttons Frame
+        # DrawingArea The Buttons Frame
         self.columnconfigure((0, 1), weight=1)
         self.rowconfigure((0, 1, 2, 3), weight=1)
 
@@ -119,7 +119,7 @@ class Menu(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)
 
-        # Grid For Menu
+        # DrawingArea For Menu
         self.columnconfigure(0, weight=1)
         self.rowconfigure((0), weight=2)
         self.rowconfigure((2), weight=5)
@@ -193,7 +193,7 @@ class Arc:
         )
 
 
-class Grid(ctk.CTkFrame):
+class DrawingArea(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)
 
@@ -492,7 +492,7 @@ class App(ctk.CTk):
         self.geometry(f"{width}x{height}")
         self.title("A* Pathfinding Algorithm")
 
-        # Grid The Window
+        # DrawingArea The Window
         self.columnconfigure((0, 1), weight=1)
         self.rowconfigure(0, weight=1)
         
@@ -500,7 +500,7 @@ class App(ctk.CTk):
         self.menu_frame = Menu(self, fg_color="#EEEEEE")
         self.menu_frame.grid(column=0, row=0, sticky="nswe", pady=10, padx=10)
 
-        self.grid = Grid(self, fg_color="#FFFFFF")
+        self.grid = DrawingArea(self, fg_color="#FFFFFF")
         self.grid.grid(column=1, row=0, sticky="nswe", pady=10, padx=10)
 
 
