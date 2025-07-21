@@ -1,8 +1,6 @@
 As part of my final year project, I built a pathfinding solution in Python based on an algorithm (a*) that finds the shortest path in a graph. This algorithm performs very well and is faster compared to others like Dijkstra's.
 
 
-# A* Algorithm Project
-
 ---
 
 ## Screenshots
