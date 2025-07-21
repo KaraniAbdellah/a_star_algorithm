@@ -2,7 +2,6 @@ As part of my final year project, I built a pathfinding solution in Python based
 
 
 
-
 **made with ❤️ by <a href="https://www.linkedin.com/in/abdellah-karani-965928294/">AbdellahKarani</a>**
 
 
